@@ -4,7 +4,6 @@ import React from 'react'
 
 import type { Footer } from '@/payload-types'
 
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 
@@ -14,19 +13,73 @@ export async function Footer() {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer className="mt-auto border-t border-border bg-black dark:bg-card text-white">
-      <div className="container py-8 gap-8 flex flex-col md:flex-row md:justify-between">
-        <Link className="flex items-center" href="/">
-          <Logo />
-        </Link>
+    <footer className="mt-auto border-t border-brand-wood/30 bg-white text-brand-charcoal">
+      <div className="container grid gap-8 py-12 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="space-y-4">
+          <Link aria-label="Back to home" className="inline-flex items-center gap-3" href="/">
+            <Logo />
+            <span className="font-heading text-lg tracking-[0.3em] uppercase">Dynamic Stylz</span>
+          </Link>
+          <p className="max-w-sm text-sm leading-relaxed text-brand-warm-gray">
+            Full-service family salon rooted in Elma, WA—bringing modern cuts, color, and kindness to
+            every appointment.
+          </p>
+        </div>
 
-        <div className="flex flex-col-reverse items-start md:flex-row gap-4 md:items-center">
-          <ThemeSelector />
-          <nav className="flex flex-col md:flex-row gap-4">
+        <div>
+          <h3 className="font-heading text-base uppercase tracking-[0.2em] text-brand-sage">
+            Visit
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed">
+            410 W Main St Suite B
+            <br />
+            Elma, WA 98541
+          </p>
+          <p className="mt-3 text-sm">
+            <span className="font-semibold">Hours:</span> Mon–Thu 9am–7pm · Fri 9am–5pm
+          </p>
+        </div>
+
+        <div>
+          <h3 className="font-heading text-base uppercase tracking-[0.2em] text-brand-sage">
+            Connect
+          </h3>
+          <nav className="mt-3 flex flex-col gap-2 text-sm">
             {navItems.map(({ link }, i) => {
-              return <CMSLink className="text-white" key={i} {...link} />
-            })}
+              return (
+                    <CMSLink
+                      className="hover:text-brand-sage transition-colors"
+                      key={i}
+                      {...link}
+                    />
+                  )
+                })}
+                <a className="hover:text-brand-sage transition-colors" href="tel:13605812428">
+                  (360) 581-2428
+                </a>
+                <a
+                  className="hover:text-brand-sage transition-colors"
+                  href="https://www.facebook.com/dynamicstylz"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Facebook
+                </a>
+                <a
+                  className="hover:text-brand-sage transition-colors"
+              href="https://maps.app.goo.gl/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Google Business Profile
+            </a>
           </nav>
+        </div>
+      </div>
+      <div className="border-t border-brand-wood/20 bg-white/60">
+        <div className="container flex flex-col gap-3 py-4 text-xs text-brand-warm-gray md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} Dynamic Stylz Salon LLC. All rights reserved.</p>
+          <p className="text-[0.7rem] uppercase tracking-[0.3em]">Crafted with care in Elma, WA</p>
         </div>
       </div>
     </footer>

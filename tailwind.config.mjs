@@ -9,7 +9,7 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  darkMode: ['selector', '[data-theme="dark"]'],
+  darkMode: false,
   plugins: [tailwindcssAnimate, typography],
   prefix: '',
   safelist: [
@@ -56,46 +56,48 @@ const config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
-        background: 'hsl(var(--background))',
-        border: 'hsla(var(--border))',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        border: 'var(--border)',
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        foreground: 'hsl(var(--foreground))',
-        input: 'hsl(var(--input))',
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'var(--card)',
+          foreground: 'var(--card-foreground)',
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground)',
         },
-        ring: 'hsl(var(--ring))',
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: 'var(--secondary)',
+          foreground: 'var(--secondary-foreground)',
         },
-        success: 'hsl(var(--success))',
-        error: 'hsl(var(--error))',
-        warning: 'hsl(var(--warning))',
+        accent: {
+          DEFAULT: 'var(--accent)',
+          dark: 'var(--accent-dark)',
+          foreground: 'var(--accent-foreground)',
+        },
+        muted: {
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
+        },
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        error: 'var(--error)',
+        ring: 'var(--ring)',
+        brand: {
+          cream: 'var(--brand-cream)',
+          parchment: 'var(--brand-parchment)',
+          wood: 'var(--brand-wood)',
+          brown: 'var(--brand-brown)',
+          taupe: 'var(--brand-taupe)',
+          sage: 'var(--brand-sage)',
+          charcoal: 'var(--brand-charcoal)',
+          warmGray: 'var(--brand-warm-gray)',
+        },
       },
       fontFamily: {
-        mono: ['var(--font-geist-mono)'],
-        sans: ['var(--font-geist-sans)'],
+        heading: ['var(--font-heading)', 'Playfair Display', 'serif'],
+        sans: ['var(--font-sans)', 'Inter', 'sans-serif'],
       },
       keyframes: {
         'accordion-down': {
@@ -109,41 +111,25 @@ const config = {
       },
       typography: () => ({
         DEFAULT: {
-          css: [
-            {
-              '--tw-prose-body': 'var(--text)',
-              '--tw-prose-headings': 'var(--text)',
-              h1: {
-                fontWeight: 'normal',
-                marginBottom: '0.25em',
-              },
+          css: {
+            '--tw-prose-body': 'var(--foreground)',
+            '--tw-prose-headings': 'var(--primary)',
+            '--tw-prose-bold': 'var(--primary)',
+            '--tw-prose-links': 'var(--accent-dark)',
+            fontFamily: 'var(--font-sans)',
+            h1: {
+              fontFamily: 'var(--font-heading)',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
             },
-          ],
-        },
-        base: {
-          css: [
-            {
-              h1: {
-                fontSize: '2.5rem',
-              },
-              h2: {
-                fontSize: '1.25rem',
-                fontWeight: 600,
-              },
+            h2: {
+              fontFamily: 'var(--font-heading)',
+              letterSpacing: '0.05em',
             },
-          ],
-        },
-        md: {
-          css: [
-            {
-              h1: {
-                fontSize: '3.5rem',
-              },
-              h2: {
-                fontSize: '1.5rem',
-              },
+            strong: {
+              color: 'var(--primary)',
             },
-          ],
+          },
         },
       }),
     },

@@ -65,7 +65,26 @@ export const hero: Field = {
         condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
       },
       relationTo: 'media',
-      required: true,
+      required: false,
+    },
+    {
+      name: 'images',
+      type: 'array',
+      label: 'Hero Images',
+      admin: {
+        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
+        description: 'Multiple images for hero gallery (up to 3 recommended)',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+      ],
+      minRows: 0,
+      maxRows: 3,
     },
   ],
   label: false,

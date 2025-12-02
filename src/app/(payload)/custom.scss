@@ -1,0 +1,35 @@
+// Hide API buttons and links in admin panel
+// Target Payload's API-related elements
+button[aria-label*='API'],
+button[aria-label*='api'],
+a[href*='/api/'],
+a[href*='api/'],
+[data-testid*='api'],
+[class*='api-button'],
+[class*='APIButton'],
+[class*='api-url'],
+[class*='payload-settings'],
+nav a[href*='/api/'],
+nav button[aria-label*='API'] {
+  display: none !important;
+}
+
+// Hide API URL text/links in collection list views
+.template-default .collection-list__wrap a[href*='api'],
+.template-default .collection-list__wrap button[aria-label*='API'],
+.template-default .collection-list__wrap button[aria-label*='api'] {
+  display: none !important;
+}
+
+// Hide API routes in navigation/sidebar
+nav[class*='nav'] a[href*='/api/'],
+nav[class*='nav'] button[aria-label*='API'] {
+  display: none !important;
+}
+
+// Additional targeting for Payload 3.x admin UI
+[class*='nav-group'] a[href*='/api/'],
+[class*='nav-group'] button[aria-label*='API'] {
+  display: none !important;
+}
+

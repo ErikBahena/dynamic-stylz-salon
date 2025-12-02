@@ -1,6 +1,6 @@
 'use client'
-import { useHeaderTheme } from '@/providers/HeaderTheme'
-import React, { useEffect } from 'react'
+
+import React from 'react'
 
 import type { Page } from '@/payload-types'
 
@@ -9,26 +9,23 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
 export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText }) => {
-  const { setHeaderTheme } = useHeaderTheme()
-
-  useEffect(() => {
-    setHeaderTheme('dark')
-  })
-
   return (
-    <div
-      className="relative -mt-[10.4rem] flex items-center justify-center text-white"
-      data-theme="dark"
-    >
-      <div className="container mb-8 z-10 relative flex items-center justify-center">
-        <div className="max-w-[36.5rem] md:text-center">
-          {richText && <RichText className="mb-6" data={richText} enableGutter={false} />}
+    <section className="relative isolate flex min-h-[70vh] items-center justify-center overflow-hidden bg-brand-charcoal text-brand-parchment">
+      <div className="container relative z-10 mb-8 flex items-center justify-center">
+        <div className="max-w-3xl text-center">
+          {richText && (
+            <RichText
+              className="mb-6 text-balance font-heading text-3xl text-brand-parchment md:text-4xl"
+              data={richText}
+              enableGutter={false}
+            />
+          )}
           {Array.isArray(links) && links.length > 0 && (
-            <ul className="flex md:justify-center gap-4">
+            <ul className="flex flex-wrap justify-center gap-4">
               {links.map(({ link }, i) => {
                 return (
                   <li key={i}>
-                    <CMSLink {...link} />
+                    <CMSLink appearance="secondary" {...link} />
                   </li>
                 )
               })}
@@ -36,11 +33,17 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
           )}
         </div>
       </div>
-      <div className="min-h-[80vh] select-none">
+      <div aria-hidden="true" className="absolute inset-0">
         {media && typeof media === 'object' && (
-          <Media fill imgClassName="-z-10 object-cover" priority resource={media} />
+          <Media
+            fill
+            imgClassName="absolute inset-0 h-full w-full object-cover opacity-50"
+            priority
+            resource={media}
+          />
         )}
       </div>
-    </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-brand-charcoal/70 via-brand-charcoal/40 to-transparent" />
+    </section>
   )
 }

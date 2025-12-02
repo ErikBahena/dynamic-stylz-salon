@@ -4,7 +4,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     defaultVariants: {
       size: 'default',
@@ -13,18 +13,19 @@ const buttonVariants = cva(
     variants: {
       size: {
         clear: '',
-        default: 'h-10 px-4 py-2',
+        default: 'h-10 px-6 py-2',
         icon: 'h-10 w-10',
-        lg: 'h-11 rounded px-8',
-        sm: 'h-9 rounded px-3',
+        lg: 'h-11 px-8',
+        sm: 'h-9 px-4',
       },
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        ghost: 'hover:bg-card hover:text-accent-foreground',
-        link: 'text-primary items-start justify-start underline-offset-4 hover:underline',
-        outline: 'border border-border bg-background hover:bg-card hover:text-accent-foreground',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        default: 'bg-brand-sage text-white hover:bg-brand-sage/90 shadow-sm hover:shadow-md',
+        destructive: 'bg-error text-white hover:bg-error/90',
+        ghost: 'bg-transparent text-brand-charcoal hover:text-brand-sage hover:bg-gray-50',
+        link: 'items-start justify-start text-brand-sage underline-offset-4 hover:underline',
+        outline:
+          'border border-brand-wood/60 bg-white text-brand-charcoal hover:border-brand-sage hover:bg-gray-50 hover:text-brand-sage',
+        secondary: 'bg-brand-wood/20 text-brand-charcoal hover:bg-brand-wood/30',
       },
     },
   },

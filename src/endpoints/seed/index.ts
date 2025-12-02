@@ -18,6 +18,9 @@ const collections: CollectionSlug[] = [
   'forms',
   'form-submissions',
   'search',
+  'services',
+  'team-members',
+  'reviews',
 ]
 
 const globals: GlobalSlug[] = ['header', 'footer']
@@ -215,32 +218,173 @@ export const seed = async ({
     }),
   ])
 
+  payload.logger.info(`— Seeding services...`)
+
+  const demoServices = [
+    {
+      title: "Women's Cut & Finish",
+      category: 'women',
+      description:
+        'Customized cut, relaxing wash, and farmhouse blowout finished with soft lived-in styling.',
+      priceType: 'fixed',
+      price: 65,
+      priceLabel: '$65+',
+      duration: '60–75 min',
+      order: 10,
+      slug: 'womens-cut-finish',
+      featured: true,
+    },
+    {
+      title: "Men's Precision Cut",
+      category: 'men',
+      description: 'Tapered cut finished with hot towel and product coaching for at-home styling.',
+      priceType: 'fixed',
+      price: 35,
+      duration: '30–45 min',
+      order: 20,
+      slug: 'mens-precision-cut',
+    },
+    {
+      title: 'Kids Cut (Under 10)',
+      category: 'kids',
+      description: 'Gentle stylist paired with patient pacing and optional quiet appointment blocks.',
+      priceType: 'fixed',
+      price: 28,
+      duration: '30 min',
+      order: 30,
+      slug: 'kids-cut',
+    },
+    {
+      title: 'Lived-in Color + Gloss',
+      category: 'color',
+      description: 'Balayage-inspired placement for soft grow-out plus custom gloss and mini trim.',
+      priceType: 'consultation',
+      duration: '2.5+ hrs',
+      featured: true,
+      order: 40,
+      slug: 'lived-in-color',
+    },
+    {
+      title: 'Blonding Session',
+      category: 'color',
+      description: 'Foil or open-air lightening focused on maximum brightness with healthy finish.',
+      priceType: 'consultation',
+      duration: '3+ hrs',
+      order: 50,
+      slug: 'blonding-session',
+    },
+    {
+      title: 'Event Styling & Updos',
+      category: 'specialty',
+      description:
+        'Half-up, braids, or full updos for weddings, prom, and special occasions. Trial available.',
+      priceType: 'consultation',
+      duration: 'By appointment',
+      order: 60,
+      slug: 'event-styling',
+    },
+  ]
+
+  await Promise.all(
+    demoServices.map((service) =>
+      payload.create({
+        collection: 'services',
+        depth: 0,
+        data: service,
+      }),
+    ),
+  )
+
+  payload.logger.info(`— Seeding team members...`)
+
+  const demoTeam = [
+    {
+      name: 'Amber',
+      role: 'Owner & Lead Stylist',
+      experienceYears: 15,
+      headshot: imageHomeDoc.id,
+      bio: 'Color-correction specialist known for calm energy, honest consultations, and Pinterest-worthy blonding.',
+      specialties: [{ specialty: 'Lived-in color' }, { specialty: 'Bridal styling' }],
+      featured: true,
+      order: 10,
+    },
+    {
+      name: 'Katie',
+      role: 'Stylist',
+      experienceYears: 8,
+      headshot: image1Doc.id,
+      bio: 'Precision cutting and men’s grooming pro who keeps Elma’s beards and fades dialed.',
+      specialties: [{ specialty: 'Fades' }, { specialty: 'Texture cuts' }],
+      order: 20,
+    },
+    {
+      name: 'Nikita',
+      role: 'Colorist',
+      experienceYears: 6,
+      headshot: image2Doc.id,
+      bio: 'Obsessed with creative color, copper moments, and ensuring every guest feels heard.',
+      specialties: [{ specialty: 'Coppers' }, { specialty: 'Hand-painted blends' }],
+      order: 30,
+    },
+  ]
+
+  await Promise.all(
+    demoTeam.map((member) =>
+      payload.create({
+        collection: 'team-members',
+        depth: 0,
+        data: member,
+      }),
+    ),
+  )
+
+  payload.logger.info(`— Seeding reviews...`)
+
+  const demoReviews = [
+    {
+      reviewerName: 'Astrid D.',
+      rating: 5,
+      source: 'facebook',
+      body: 'First time at Dynamic Stylz for cut and color and it was perfect—exactly what I’d pinned. Amber is a magician.',
+      image: image1Doc.id,
+      featured: true,
+      publishedAt: new Date().toISOString(),
+    },
+    {
+      reviewerName: 'Megan S.',
+      rating: 5,
+      source: 'facebook',
+      body: 'I always walk out feeling like a million bucks. The whole team is friendly and attentive.',
+      image: image2Doc.id,
+      featured: true,
+      publishedAt: new Date().toISOString(),
+    },
+    {
+      reviewerName: 'Georgia B.',
+      rating: 5,
+      source: 'google',
+      body: 'They are true color experts—my blonde is always natural and healthy.',
+      featured: false,
+      publishedAt: new Date().toISOString(),
+    },
+  ]
+
+  await Promise.all(
+    demoReviews.map((review) =>
+      payload.create({
+        collection: 'reviews',
+        depth: 0,
+        data: review,
+      }),
+    ),
+  )
+
   payload.logger.info(`— Seeding globals...`)
 
   await Promise.all([
     payload.updateGlobal({
       slug: 'header',
-      data: {
-        navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Posts',
-              url: '/posts',
-            },
-          },
-          {
-            link: {
-              type: 'reference',
-              label: 'Contact',
-              reference: {
-                relationTo: 'pages',
-                value: contactPage.id,
-              },
-            },
-          },
-        ],
-      },
+      data: {},
     }),
     payload.updateGlobal({
       slug: 'footer',
