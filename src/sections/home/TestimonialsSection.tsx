@@ -12,23 +12,56 @@ interface Props {
 export const TestimonialsSection: React.FC<Props> = ({ reviews }) => {
   if (!reviews?.length) return null
 
-  const prioritized = [...reviews].sort((a, b) => {
-    const aImages = Array.isArray(a.images) ? a.images.length : 0
-    const bImages = Array.isArray(b.images) ? b.images.length : 0
-    const imageScore = bImages - aImages
-    if (imageScore !== 0) return imageScore
-    return Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+  // Calculate estimated size for each review
+  const reviewsWithSize = reviews.map((review) => {
+    const imageCount = Array.isArray(review.images) ? review.images.length : 0
+    const descriptionLength = review.body?.length || 0
+    // Weight: images are more impactful, so multiply by 100, description by 1
+    const estimatedSize = imageCount * 100 + descriptionLength
+    return { review, estimatedSize }
   })
 
+  // Sort by size (smallest first)
+  const sortedBySize = [...reviewsWithSize].sort((a, b) => a.estimatedSize - b.estimatedSize)
+  const sorted = sortedBySize.map((item) => item.review)
+  const limit = Math.min(6, sorted.length)
+
+  // Rearrange for balanced layout: shorter on sides, longer in middle
+  // Grid positions: [0=left, 1=middle, 2=right, 3=left, 4=middle, 5=right]
+  // Mapping: 0->0(smallest), 1->5(largest), 2->1(2nd small), 3->2(3rd small), 4->4(2nd large), 5->3(4th small)
+  const arranged: (typeof reviews)[number][] = []
+  
+  for (let i = 0; i < limit; i++) {
+    const isMiddleColumn = i % 3 === 1 // Positions 1 and 4 (middle column)
+    
+    if (isMiddleColumn) {
+      // Middle column: use larger items
+      // Position 1 -> index (limit-1), Position 4 -> index (limit-2)
+      const largeIndex = limit - 1 - Math.floor(i / 3)
+      if (largeIndex >= 0 && largeIndex < sorted.length) {
+        arranged.push(sorted[largeIndex])
+      }
+    } else {
+      // Left/right columns: use smaller items
+      // Count how many side positions we've filled
+      const sideCount = Math.floor(i / 3) * 2 + (i % 3 === 0 ? 0 : 1)
+      if (sideCount < sorted.length) {
+        arranged.push(sorted[sideCount])
+      }
+    }
+  }
+
+  const prioritized = arranged.length === limit ? arranged : sorted.slice(0, limit)
+
   return (
-    <section className="bg-white py-16 max-h-[calc(100vh-8rem)] overflow-hidden flex flex-col">
-      <div className="container space-y-10 flex-1 flex flex-col min-h-0">
+    <section className="bg-white py-16">
+      <div className="container space-y-10">
         <div className="flex flex-col items-center gap-2 text-center">
           <p className="text-sm uppercase tracking-[0.4em] text-brand-sage">With love from Elma</p>
           <h2 className="font-heading text-3xl text-brand-charcoal md:text-4xl">What our clients say</h2>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3 lg:items-center">
+        <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
           {prioritized.slice(0, 6).map((review) => {
             const rating = Math.min(Math.max(review.rating || 5, 1), 5)
             return (
