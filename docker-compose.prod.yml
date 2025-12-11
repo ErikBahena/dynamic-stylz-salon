@@ -2,7 +2,7 @@ version: '3'
 
 services:
   payload:
-    build: .
+    image: erikjb/dynamic-stylz:latest
     restart: always
     ports:
       - '3000:3000'

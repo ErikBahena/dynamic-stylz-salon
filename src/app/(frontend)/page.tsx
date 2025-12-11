@@ -1,6 +1,9 @@
 import configPromise from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 
+// Skip static optimization during build - render all pages on-demand
+export const dynamic = 'force-dynamic'
+
 import { homeStatic } from '@/endpoints/seed/home-static'
 import {
   AccommodationsNote,
