@@ -3,7 +3,7 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
 
 import { Media } from '@/components/Media'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
 
 type Service = RequiredDataFromCollectionSlug<'services'>
 
@@ -42,6 +42,35 @@ const categoryLabels: Record<string, string> = {
 export const ServicesShowcase: React.FC<Props> = ({ services }) => {
   // Default to showing all services
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [isVisible, setIsVisible] = useState(false)
+  const [animateCards, setAnimateCards] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Intersection observer for scroll-triggered animation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          setTimeout(() => setAnimateCards(true), 200)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  // Re-trigger card animations when category changes
+  useEffect(() => {
+    setAnimateCards(false)
+    const timer = setTimeout(() => setAnimateCards(true), 50)
+    return () => clearTimeout(timer)
+  }, [selectedCategory])
 
   // Get unique categories from services in the order they appear (based on service order)
   const categories = useMemo(() => {
@@ -77,21 +106,33 @@ export const ServicesShowcase: React.FC<Props> = ({ services }) => {
   if (!services?.length) return null
 
   return (
-    <section className="bg-white py-16">
+    <section ref={sectionRef} id="services" className="scroll-mt-20 bg-white py-16">
       <div className="container space-y-10">
-        <div className="flex flex-col items-center gap-2 text-center">
+        <div 
+          className="flex flex-col items-center gap-2 text-center transition-all duration-700"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+          }}
+        >
           <p className="text-sm uppercase tracking-[0.4em] text-brand-sage">Signature services</p>
           <h2 className="font-heading text-3xl text-brand-charcoal md:text-4xl">Cuts, color, and care</h2>
         </div>
 
         {/* Category Chip Navigation */}
-        <div className="flex flex-wrap justify-center gap-3">
+        <div 
+          className="flex flex-wrap justify-center gap-3 transition-all duration-700 delay-100"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+          }}
+        >
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`rounded-full px-6 py-2 text-sm font-medium uppercase tracking-[0.1em] transition-all ${
+            className={`rounded-full px-6 py-2 text-sm font-medium uppercase tracking-[0.1em] transition-all duration-300 ${
               selectedCategory === 'all'
-                ? 'bg-brand-sage text-white'
-                : 'bg-gray-100 text-brand-charcoal hover:bg-gray-200'
+                ? 'bg-brand-sage text-white shadow-md scale-105'
+                : 'bg-gray-100 text-brand-charcoal hover:bg-gray-200 hover:scale-105'
             }`}
           >
             All
@@ -100,10 +141,10 @@ export const ServicesShowcase: React.FC<Props> = ({ services }) => {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`rounded-full px-6 py-2 text-sm font-medium uppercase tracking-[0.1em] transition-all ${
+              className={`rounded-full px-6 py-2 text-sm font-medium uppercase tracking-[0.1em] transition-all duration-300 ${
                 selectedCategory === category
-                  ? 'bg-brand-sage text-white'
-                  : 'bg-gray-100 text-brand-charcoal hover:bg-gray-200'
+                  ? 'bg-brand-sage text-white shadow-md scale-105'
+                  : 'bg-gray-100 text-brand-charcoal hover:bg-gray-200 hover:scale-105'
               }`}
             >
               {categoryLabels[category] || category}
@@ -116,7 +157,13 @@ export const ServicesShowcase: React.FC<Props> = ({ services }) => {
           filteredServices.length === 1 ? (
             // Single service - centered detailed layout
             <div className="flex justify-center">
-              <article className="group w-full max-w-4xl overflow-hidden rounded-3xl border border-white/50 bg-gradient-to-br from-white via-gray-50 to-gray-100/70 shadow-sm transition-all hover:shadow-lg">
+              <article 
+                className="group w-full max-w-4xl overflow-hidden rounded-3xl border border-white/50 bg-gradient-to-br from-white via-gray-50 to-gray-100/70 shadow-sm transition-all duration-500 hover:shadow-lg hover:-translate-y-1"
+                style={{
+                  opacity: animateCards ? 1 : 0,
+                  transform: animateCards ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.98)',
+                }}
+              >
                 <div className="flex flex-col gap-6 p-8 md:flex-row md:items-stretch md:gap-8">
                   {filteredServices[0].image && typeof filteredServices[0].image === 'object' && (
                     <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-200 md:w-80 md:shrink-0">
@@ -179,15 +226,20 @@ export const ServicesShowcase: React.FC<Props> = ({ services }) => {
             </div>
           ) : (
             // Multiple services - grid layout
-            <div className="grid gap-6 md:grid-cols-2">
-              {filteredServices.map((service) => (
+            <div className="grid gap-6 lg:grid-cols-2">
+              {filteredServices.map((service, index) => (
                 <article
                   key={service.id}
-                  className="group overflow-hidden rounded-3xl border border-white/50 bg-gradient-to-br from-white via-gray-50 to-gray-100/70 shadow-sm transition-all hover:shadow-lg"
+                  className="group overflow-hidden rounded-3xl border border-white/50 bg-gradient-to-br from-white via-gray-50 to-gray-100/70 shadow-sm transition-all duration-500 hover:shadow-lg hover:-translate-y-1"
+                  style={{
+                    opacity: animateCards ? 1 : 0,
+                    transform: animateCards ? 'translateY(0)' : 'translateY(30px)',
+                    transitionDelay: `${index * 100}ms`,
+                  }}
                 >
-                  <div className="flex flex-col gap-5 p-6 md:flex-row md:items-stretch md:gap-8">
+                  <div className="flex flex-col gap-5 p-6 lg:flex-row lg:items-stretch lg:gap-6">
                     {service.image && typeof service.image === 'object' && (
-                      <div className="relative h-40 overflow-hidden rounded-2xl bg-gray-200 md:w-40">
+                      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-200 lg:aspect-square lg:w-36 lg:shrink-0">
                         <Media
                           fill
                           imgClassName="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -196,32 +248,43 @@ export const ServicesShowcase: React.FC<Props> = ({ services }) => {
                       </div>
                     )}
 
-                    <div className="flex flex-1 flex-col justify-between gap-4">
-                      <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                        <div className="space-y-1">
-                          <p className="text-[0.7rem] uppercase tracking-[0.3em] text-brand-warm-gray">
-                            {categoryLabels[service.category] || service.category}
-                          </p>
-                          <h3 className="font-heading text-xl text-brand-charcoal md:text-2xl">
-                            {service.title}
-                          </h3>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-base font-semibold text-brand-charcoal md:text-lg">
-                            {formatPrice(service)}
-                          </p>
-                          {service.duration && (
-                            <p className="mt-1 text-[0.7rem] uppercase tracking-[0.2em] text-brand-warm-gray">
-                              {service.duration}
-                            </p>
-                          )}
-                        </div>
+                    <div className="flex flex-1 flex-col justify-between gap-3">
+                      <div className="space-y-1">
+                        <p className="text-[0.7rem] uppercase tracking-[0.3em] text-brand-warm-gray">
+                          {categoryLabels[service.category] || service.category}
+                        </p>
+                        <h3 className="font-heading text-xl text-brand-charcoal lg:text-2xl">
+                          {service.title}
+                        </h3>
                       </div>
 
                       <p className="text-sm leading-relaxed text-brand-charcoal/80">{service.description}</p>
 
-                      <div className="flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.25em] text-brand-warm-gray">
-                        {service.featured && <span className="text-brand-sage">Featured service</span>}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full border border-brand-charcoal/15 bg-white px-3 py-1 font-heading text-sm tracking-wide text-brand-charcoal">
+                          {formatPrice(service)}
+                        </span>
+                        {service.duration && (
+                          <span className="flex items-center gap-1.5 rounded-full border border-brand-wood/30 bg-white px-3 py-1 text-xs font-medium uppercase tracking-[0.15em] text-brand-charcoal/70">
+                            <svg
+                              className="h-3 w-3"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                              />
+                            </svg>
+                            {service.duration}
+                          </span>
+                        )}
+                        {service.featured && (
+                          <span className="text-xs uppercase tracking-[0.25em] text-brand-sage">Featured</span>
+                        )}
                       </div>
                     </div>
                   </div>

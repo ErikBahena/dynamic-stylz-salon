@@ -11,7 +11,6 @@ import { post2 } from './post-2'
 import { post3 } from './post-3'
 
 const collections: CollectionSlug[] = [
-  'categories',
   'media',
   'pages',
   'posts',
@@ -25,7 +24,6 @@ const collections: CollectionSlug[] = [
 
 const globals: GlobalSlug[] = ['header', 'footer']
 
-const categories = ['Technology', 'News', 'Finance', 'Design', 'Software', 'Engineering']
 
 // Next.js revalidation errors are normal when seeding the database without a server running
 // i.e. running `yarn seed` locally instead of using the admin UI within an active app
@@ -51,9 +49,7 @@ export const seed = async ({
     globals.map((global) =>
       payload.updateGlobal({
         slug: global,
-        data: {
-          navItems: [],
-        },
+        data: {} as Record<string, unknown>,
         depth: 0,
         context: {
           disableRevalidate: true,
@@ -130,15 +126,6 @@ export const seed = async ({
       data: imageHero1,
       file: hero1Buffer,
     }),
-    categories.map((category) =>
-      payload.create({
-        collection: 'categories',
-        data: {
-          title: category,
-          slug: category,
-        },
-      }),
-    ),
   ])
 
   payload.logger.info(`— Seeding posts...`)
@@ -220,7 +207,18 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding services...`)
 
-  const demoServices = [
+  const demoServices: Array<{
+    title: string
+    category: 'women' | 'men' | 'kids' | 'color' | 'specialty' | 'treatment'
+    description: string
+    priceType: 'fixed' | 'consultation'
+    price?: number
+    priceLabel?: string
+    duration: string
+    order: number
+    slug: string
+    featured?: boolean
+  }> = [
     {
       title: "Women's Cut & Finish",
       category: 'women',
@@ -340,13 +338,21 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding reviews...`)
 
-  const demoReviews = [
+  const demoReviews: Array<{
+    reviewerName: string
+    rating: number
+    source: 'facebook' | 'google' | 'direct'
+    body: string
+    images?: Array<{ image: string }>
+    featured: boolean
+    publishedAt: string
+  }> = [
     {
       reviewerName: 'Astrid D.',
       rating: 5,
       source: 'facebook',
-      body: 'First time at Dynamic Stylz for cut and color and it was perfect—exactly what I’d pinned. Amber is a magician.',
-      image: image1Doc.id,
+      body: "First time at Dynamic Stylz for cut and color and it was perfect—exactly what I'd pinned. Amber is a magician.",
+      images: [{ image: image1Doc.id }],
       featured: true,
       publishedAt: new Date().toISOString(),
     },
@@ -355,7 +361,7 @@ export const seed = async ({
       rating: 5,
       source: 'facebook',
       body: 'I always walk out feeling like a million bucks. The whole team is friendly and attentive.',
-      image: image2Doc.id,
+      images: [{ image: image2Doc.id }],
       featured: true,
       publishedAt: new Date().toISOString(),
     },

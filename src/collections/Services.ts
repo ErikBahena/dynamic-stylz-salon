@@ -21,13 +21,7 @@ export const Services: CollectionConfig = {
       type: 'text',
       required: true,
     },
-    slugField({
-      name: 'slug',
-      admin: {
-        position: 'sidebar',
-        description: 'Used for anchors and filtering in the UI.',
-      },
-    }),
+    slugField({ name: 'slug' }),
     {
       name: 'category',
       type: 'select',

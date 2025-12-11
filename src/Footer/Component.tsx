@@ -6,6 +6,7 @@ import type { Footer } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
+import { FooterClient } from './FooterClient'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
@@ -14,6 +15,7 @@ export async function Footer() {
 
   return (
     <footer className="mt-auto border-t border-brand-wood/30 bg-white text-brand-charcoal">
+      <FooterClient>
       <div className="container grid gap-8 py-12 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]">
         <div className="space-y-4">
           <Link aria-label="Back to home" className="inline-flex items-center gap-3" href="/">
@@ -82,6 +84,7 @@ export async function Footer() {
           <p className="text-[0.7rem] uppercase tracking-[0.3em]">Crafted with care in Elma, WA</p>
         </div>
       </div>
+      </FooterClient>
     </footer>
   )
 }

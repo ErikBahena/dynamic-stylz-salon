@@ -11,26 +11,22 @@ type Props = {
   hero?: Page['hero']
 }
 
+
 export const HeroSection: React.FC<Props> = ({ hero }) => {
   const [isVisible, setIsVisible] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  // Use images array if available, otherwise fall back to single media or empty
+  const heroImages =
+    hero?.images && hero.images.length > 0
+      ? hero.images.map((item) => (typeof item.image === 'object' ? item.image : null)).filter(Boolean)
+      : hero?.media && typeof hero.media === 'object'
+        ? [hero.media]
+        : []
 
   useEffect(() => {
     setIsVisible(true)
   }, [])
-
-  if (!hero) return null
-
-  const { links, media, richText, images } = hero
-
-  // Use images array if available, otherwise fall back to single media or empty
-  const heroImages =
-    images && images.length > 0
-      ? images.map((item) => (typeof item.image === 'object' ? item.image : null)).filter(Boolean)
-      : media && typeof media === 'object'
-        ? [media]
-        : []
-
-  const [currentSlide, setCurrentSlide] = useState(0)
 
   useEffect(() => {
     if (heroImages.length <= 1) return
@@ -41,6 +37,11 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
 
     return () => clearInterval(timer)
   }, [heroImages.length])
+
+  if (!hero) return null
+
+  const { links, richText } = hero
+
 
   return (
     <section className="relative flex h-[85vh] min-h-[600px] flex-col overflow-hidden bg-white md:h-[90vh] md:min-h-[700px]">
@@ -70,24 +71,30 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
           </div>
         )}
         {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
       </div>
 
       {/* Content Overlay - Centered on Image */}
       <div className="container relative z-10 flex h-full flex-col justify-center">
-        <div
-          className="mx-auto max-w-3xl space-y-8 text-center transition-all duration-700"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-          }}
-        >
+        <div className="mx-auto max-w-3xl space-y-8 text-center">
           {/* Decorative accent line */}
-          <div className="mx-auto h-1 w-20 bg-brand-sage" />
+          <div 
+            className="mx-auto h-1 w-20 bg-brand-sage transition-all duration-700"
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? 'scaleX(1)' : 'scaleX(0)',
+            }}
+          />
 
           {/* Main heading */}
           {richText && (
-            <div className="space-y-6">
+            <div 
+              className="space-y-6 transition-all duration-700 delay-100"
+              style={{
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+              }}
+            >
               <RichText
                 className="text-balance font-heading text-4xl leading-tight tracking-tight text-white md:text-5xl lg:text-6xl"
                 data={richText}
@@ -101,30 +108,55 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
           )}
 
           {/* CTA buttons */}
-          {Array.isArray(links) && links.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-4">
-              {links.map(({ link }, i) => {
-                return (
-                  <CMSLink
-                    key={i}
-                    appearance={i === 0 ? 'default' : 'outline'}
-                    className={
-                      i === 0
-                        ? 'bg-brand-sage px-8 py-3 text-lg font-medium text-white transition-all hover:bg-brand-sage/90 hover:shadow-lg'
-                        : 'border-white/80 bg-white/10 backdrop-blur-sm px-8 py-3 text-lg font-medium text-white transition-all hover:bg-white/20 hover:border-white'
-                    }
-                    {...link}
-                  />
-                )
-              })}
-            </div>
-          )}
+          <div 
+            className="flex flex-wrap justify-center gap-4 transition-all duration-700 delay-300"
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+            }}
+          >
+            {Array.isArray(links) && links.length > 0 ? (
+              links.map(({ link }, i) => (
+                <CMSLink
+                  key={i}
+                  appearance={i === 0 ? 'default' : 'outline'}
+                  className={
+                    i === 0
+                      ? 'rounded-full bg-brand-sage px-8 py-4 text-lg font-medium text-white shadow-lg transition-all duration-300 hover:bg-brand-sage/90 hover:shadow-xl hover:scale-105'
+                      : 'rounded-full border-2 border-white/80 bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:bg-white/20 hover:border-white hover:scale-105'
+                  }
+                  {...link}
+                />
+              ))
+            ) : (
+              <>
+                <a
+                  href="tel:+13604826019"
+                  className="rounded-full bg-brand-sage px-8 py-4 text-lg font-medium text-white shadow-lg transition-all duration-300 hover:bg-brand-sage/90 hover:shadow-xl hover:scale-105"
+                >
+                  Book Now
+                </a>
+                <a
+                  href="#services"
+                  className="rounded-full border-2 border-white/80 bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:bg-white/20 hover:border-white hover:scale-105"
+                >
+                  View Services
+                </a>
+              </>
+            )}
+          </div>
 
           {/* Location & Hours */}
-          <div className="flex flex-wrap justify-center items-center gap-6 border-t border-white/30 pt-8 text-sm font-medium text-white/90">
+          <div 
+            className="flex flex-col items-center gap-4 border-t border-white/30 pt-8 text-sm font-medium text-white/90 transition-all duration-700 delay-500 sm:flex-row sm:justify-center sm:gap-6"
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+            }}
+          >
             <div className="flex items-center gap-2">
               <svg
-                className="h-5 w-5 text-brand-sage"
+                className="h-5 w-5 shrink-0 text-brand-sage"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -143,10 +175,10 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
               </svg>
               <span>Elma, WA</span>
             </div>
-            <div className="h-4 w-px bg-white/40" />
+            <div className="hidden h-4 w-px bg-white/40 sm:block" />
             <div className="flex items-center gap-2">
               <svg
-                className="h-5 w-5 text-brand-sage"
+                className="h-5 w-5 shrink-0 text-brand-sage"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.5}

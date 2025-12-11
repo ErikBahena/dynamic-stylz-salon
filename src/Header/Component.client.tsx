@@ -1,16 +1,29 @@
 'use client'
 
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Logo } from '@/components/Logo/Logo'
 
 export const HeaderClient: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
+
   return (
     <header className="relative z-10">
       <div className="container grid grid-cols-3 items-center gap-4 py-2 md:py-4">
         {/* Logo on left */}
-        <Link className="flex items-center gap-5" href="/">
+        <Link 
+          className="flex items-center gap-5 transition-all duration-500"
+          href="/"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateX(0)' : 'translateX(-20px)',
+          }}
+        >
           <Logo loading="eager" priority="high" />
           <span className="font-heading text-xl uppercase tracking-[0.3em] text-brand-charcoal hidden sm:inline">
             Dynamic Stylz Salon
@@ -18,7 +31,13 @@ export const HeaderClient: React.FC = () => {
         </Link>
 
         {/* Book Now text link in center */}
-        <div className="flex justify-center">
+        <div 
+          className="flex justify-center transition-all duration-500 delay-100"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateY(0)' : 'translateY(-10px)',
+          }}
+        >
           <Link
             href="/contact"
             className="text-brand-charcoal transition-colors hover:text-brand-sage uppercase tracking-[0.3em]"
@@ -28,12 +47,18 @@ export const HeaderClient: React.FC = () => {
         </div>
 
         {/* Social icons on right */}
-        <div className="flex items-center justify-end gap-4">
+        <div 
+          className="flex items-center justify-end gap-4 transition-all duration-500 delay-200"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateX(0)' : 'translateX(20px)',
+          }}
+        >
           <a
             href="https://share.google/Xkcxld1KoMv3huCpK"
             rel="noreferrer"
             target="_blank"
-            className="transition-opacity hover:opacity-80"
+            className="transition-all duration-300 hover:opacity-80 hover:scale-110"
             aria-label="View Dynamic Stylz Salon on Google"
           >
             <svg
@@ -51,7 +76,7 @@ export const HeaderClient: React.FC = () => {
             href="https://www.facebook.com/AmberStuderStylist/photos"
             rel="noreferrer"
             target="_blank"
-            className="transition-opacity hover:opacity-80"
+            className="transition-all duration-300 hover:opacity-80 hover:scale-110"
             aria-label="Visit Dynamic Stylz Salon on Facebook"
           >
             <svg
