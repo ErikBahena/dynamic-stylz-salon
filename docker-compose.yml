@@ -15,9 +15,6 @@ services:
     env_file:
       - .env
     environment:
-      # Use the internal Docker network hostname for Mongo
-      - DATABASE_URI=mongodb://mongo:27017/dynamic-stylz
-
   mongo:
     image: mongo:latest
     # No host port mapping; avoids conflicts with local Mongo

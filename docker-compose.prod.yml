@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  payload:
+    build: .
+    restart: always
+    ports:
+      - '3000:3000'
+    volumes:
+      - type: bind
+        source: ./media
+        target: /app/media
+    depends_on:
+      - mongo
+    env_file:
+      - .env
+    environment:
+      # use the internal Docker network hostname for Mongo
+      - DATABASE_URI=mongodb://mongo:27017/dynamic-stylz
+      - PAYLOAD_CONFIG_PATH=src/payload.config.ts
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    command:
+      - --storageEngine=wiredTiger
+    volumes:
+      - data:/data/db
+    logging:
+      driver: none
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME:-localhost}
+    depends_on:
+      - payload
+
+volumes:
+  data:
+  caddy_data:
+  caddy_config:

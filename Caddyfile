@@ -1,0 +1,11 @@
+{
+	# Global options
+	email erik@example.com # Update this email for Let's Encrypt
+}
+
+{$DOMAIN_NAME:localhost} {
+	reverse_proxy payload:3000
+    
+    # Enable compression for faster loads
+    encode gzip zstd
+}
