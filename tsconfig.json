@@ -4,7 +4,11 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "target": "ES2022",
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,
@@ -15,9 +19,15 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "isolatedModules": true,
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
@@ -28,5 +38,7 @@
     "next-env.d.ts",
     "next.config.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

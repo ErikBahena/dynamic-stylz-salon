@@ -51,7 +51,7 @@ export const reviews: Review[] = [
     body: 'My whole family goes here. Great with the kids, patient with my teenager, and I always leave feeling like myself. Can’t recommend Dynamic Stylz enough.',
     images: [
       {
-        src: '/media/kids-cut-600x804.jpg',
+        src: '/media/kids-cut-1-600x804.jpg',
         alt: 'A kid-friendly cut at Dynamic Stylz',
         width: 600,
         height: 804,

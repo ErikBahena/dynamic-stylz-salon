@@ -15,7 +15,7 @@ export const team: TeamMember[] = [
     experienceYears: 15,
     bio: 'Amber owns Dynamic Stylz and is known around Elma for precise color work, fair pricing, and taking the time to get every detail right.',
     headshot: {
-      src: '/media/amber-300x291.png',
+      src: '/media/amber.jpg',
       alt: 'Amber, owner of Dynamic Stylz Salon',
       width: 300,
       height: 291,
