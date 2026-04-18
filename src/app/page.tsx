@@ -6,6 +6,7 @@ import {
   ServicesShowcase,
   TeamSpotlight,
   TestimonialsSection,
+  VisitSection,
 } from '@/sections/home'
 import { hero } from '@/data/hero'
 import { reviews } from '@/data/reviews'
@@ -26,6 +27,7 @@ export default function HomePage() {
       <ServicesShowcase services={sortedServices.slice(0, 6)} />
       <TestimonialsSection reviews={sortedReviews} />
       <TeamSpotlight team={sortedTeam.slice(0, 6)} />
+      <VisitSection />
       <AccommodationsNote />
     </main>
   )

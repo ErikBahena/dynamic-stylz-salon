@@ -10,7 +10,7 @@ import { cn } from '@/utilities/ui'
 const NAV_LINKS = [
   { label: 'Services', href: '/#services' },
   { label: 'Stylists', href: '/#team' },
-  { label: 'Visit', href: '/contact' },
+  { label: 'Visit', href: '/#visit' },
 ]
 
 /**
