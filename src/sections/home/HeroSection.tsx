@@ -70,8 +70,14 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
           </p>
         </div>
 
-        {/* Text column */}
-        <div className="relative flex flex-col md:col-span-7 lg:col-span-7">
+        {/* Text column. `flex-1` on mobile makes this column absorb the
+            remaining viewport height after the image (36svh) so the
+            content's `mt-auto` has room to push the CTAs down to the
+            bottom of the hero — "Book Now" sits at the bottom of 100svh
+            instead of floating in the middle of a dark empty block. On
+            desktop the parent switches to `md:grid`, which ignores flex
+            properties, so sizing still comes from `md:col-span-7`. */}
+        <div className="relative flex flex-1 flex-col md:col-span-7 lg:col-span-7">
           {/* Warm feminine blooms — limited to the text side */}
           <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
             <div
@@ -176,17 +182,18 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
         </div>
       </div>
 
-      {/* Fine bottom meta bar — spans full width. Padding + tracking ease on
-          mobile so the address + hours fit comfortably inside the viewport
-          at text-[0.65rem] without horizontal overflow, and the bar doesn't
-          eat more than ~42px of vertical budget inside 100svh. */}
-      <div className="border-t border-ivory/15 bg-ink/60 backdrop-blur-sm">
-        <div className="container py-2.5 text-[0.65rem] text-ivory/70 md:py-4 md:text-[0.7rem]">
-          <div className="flex flex-col gap-1 uppercase tracking-[0.16em] md:flex-row md:items-center md:justify-between md:gap-2 md:tracking-[0.24em]">
+      {/* Fine bottom meta bar — desktop only. On mobile the hero CTAs own
+          the bottom of the viewport; address + hours live in the site
+          footer and on `/contact`, so repeating them here just ate
+          vertical budget inside 100svh and pushed the CTAs off the fold.
+          Desktop keeps the bar as a full-width editorial ruler. */}
+      <div className="hidden border-t border-ivory/15 bg-ink/60 backdrop-blur-sm md:block">
+        <div className="container py-4 text-[0.7rem] text-ivory/70">
+          <div className="flex flex-col items-center justify-between gap-2 uppercase tracking-[0.24em] md:flex-row">
             <span>
               {site.address.street} · {site.address.city}, {site.address.state}
             </span>
-            <span className="hidden md:inline">Appointments by request</span>
+            <span>Appointments by request</span>
             <span>{site.hours.summary}</span>
           </div>
         </div>
