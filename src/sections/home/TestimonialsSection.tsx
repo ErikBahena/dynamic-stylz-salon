@@ -1,195 +1,225 @@
-'use client'
-
-import type { RequiredDataFromCollectionSlug } from 'payload'
+import type { Review } from '@/types/content'
 
 import { Media } from '@/components/Media'
-import React, { useEffect, useRef, useState } from 'react'
+import { Reveal } from '@/components/Reveal'
+import React from 'react'
 
-type Review = RequiredDataFromCollectionSlug<'reviews'>
-
-interface Props {
+type Props = {
   reviews: Review[]
 }
 
+const sourceLabel: Record<string, string> = {
+  facebook: 'Facebook',
+  google: 'Google',
+  direct: 'Direct',
+}
+
+/**
+ * Editorial testimonials — visual, magazine-style.
+ * Two featured reviews with photos displayed in an alternating spread;
+ * a tight wall of short quotes underneath for breadth.
+ */
 export const TestimonialsSection: React.FC<Props> = ({ reviews }) => {
-  const [isVisible, setIsVisible] = useState(false)
-  const [animateCards, setAnimateCards] = useState(false)
-  const sectionRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          setTimeout(() => setAnimateCards(true), 200)
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [])
-
   if (!reviews?.length) return null
 
-  // Calculate estimated size for each review
-  const reviewsWithSize = reviews.map((review) => {
-    const imageCount = Array.isArray(review.images) ? review.images.length : 0
-    const descriptionLength = review.body?.length || 0
-    // Weight: images are more impactful, so multiply by 100, description by 1
-    const estimatedSize = imageCount * 100 + descriptionLength
-    return { review, estimatedSize }
-  })
+  // Pull reviews that have photos first — those anchor the spread.
+  const withImages = reviews.filter((r) => r.images && r.images.length > 0)
+  const featured = withImages.slice(0, 2)
+  const rest = reviews.filter((r) => !featured.includes(r)).slice(0, 3)
 
-  // Sort by size (smallest first)
-  const sortedBySize = [...reviewsWithSize].sort((a, b) => a.estimatedSize - b.estimatedSize)
-  const sorted = sortedBySize.map((item) => item.review)
-  const limit = Math.min(6, sorted.length)
-
-  // Rearrange for balanced layout: shorter on sides, longer in middle
-  // Grid positions: [0=left, 1=middle, 2=right, 3=left, 4=middle, 5=right]
-  // Mapping: 0->0(smallest), 1->5(largest), 2->1(2nd small), 3->2(3rd small), 4->4(2nd large), 5->3(4th small)
-  const arranged: (typeof reviews)[number][] = []
-  
-  for (let i = 0; i < limit; i++) {
-    const isMiddleColumn = i % 3 === 1 // Positions 1 and 4 (middle column)
-    
-    if (isMiddleColumn) {
-      // Middle column: use larger items
-      // Position 1 -> index (limit-1), Position 4 -> index (limit-2)
-      const largeIndex = limit - 1 - Math.floor(i / 3)
-      if (largeIndex >= 0 && largeIndex < sorted.length) {
-        arranged.push(sorted[largeIndex])
-      }
-    } else {
-      // Left/right columns: use smaller items
-      // Count how many side positions we've filled
-      const sideCount = Math.floor(i / 3) * 2 + (i % 3 === 0 ? 0 : 1)
-      if (sideCount < sorted.length) {
-        arranged.push(sorted[sideCount])
-      }
-    }
+  if (featured.length === 0) {
+    // Fallback: original pull-quote layout if no photos exist.
+    return <QuotesOnly reviews={reviews.slice(0, 2)} />
   }
 
-  const prioritized = arranged.length === limit ? arranged : sorted.slice(0, limit)
-
   return (
-    <section ref={sectionRef} className="bg-white py-16">
-      <div className="container space-y-10">
-        <div 
-          className="flex flex-col items-center gap-2 text-center transition-all duration-700"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-          }}
-        >
-          <p className="text-sm uppercase tracking-[0.4em] text-brand-sage">With love from Elma</p>
-          <h2 className="font-heading text-3xl text-brand-charcoal md:text-4xl">What our clients say</h2>
-        </div>
-
-        <div className="grid items-start gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {prioritized.slice(0, 6).map((review, index) => {
-            const rating = Math.min(Math.max(review.rating || 5, 1), 5)
-            return (
-              <figure
-                className="flex flex-col justify-center gap-4 rounded-2xl border border-brand-wood/40 bg-white p-5 shadow-[0_15px_30px_rgba(32,26,23,0.08)] transition-all duration-500 hover:-translate-y-1 hover:shadow-lg sm:p-6"
-                key={review.id}
-                style={{
-                  opacity: animateCards ? 1 : 0,
-                  transform: animateCards ? 'translateY(0)' : 'translateY(30px)',
-                  transitionDelay: `${index * 100}ms`,
-                }}
+    <section
+      data-nav-theme="light"
+      className="relative isolate flex min-h-screen flex-col justify-center overflow-hidden bg-ink py-16 text-ivory md:py-20"
+    >
+      <div className="container">
+        {/* Eyebrow header */}
+        <Reveal>
+          <div className="grid gap-6 md:grid-cols-12 md:items-end md:gap-10">
+            <div className="md:col-span-7">
+              <p
+                className="text-[0.68rem] font-medium uppercase text-ivory/60 mb-3"
+                style={{ letterSpacing: '0.35em' }}
               >
-                {Array.isArray(review.images) && review.images.length > 0 ? (
-                  <div className="grid gap-1 overflow-hidden rounded-xl border border-brand-wood/50">
-                    {review.images.length === 1 ? (
-                      <div className="relative aspect-[4/3] w-full">
-                        {typeof review.images[0].image === 'object' && (
-                          <Media fill imgClassName="object-cover" loading="lazy" resource={review.images[0].image} />
-                        )}
-                      </div>
-                    ) : review.images.length === 2 ? (
-                      <div className="grid grid-cols-2 gap-1">
-                        {review.images.map((item, idx) => (
-                          <div key={idx} className="relative aspect-square w-full">
-                            {typeof item.image === 'object' && (
-                              <Media fill imgClassName="object-cover" loading="lazy" resource={item.image} />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    ) : review.images.length === 3 ? (
-                      <div className="grid grid-cols-2 gap-1">
-                        <div className="relative col-span-2 aspect-[2/1] w-full">
-                          {typeof review.images[0].image === 'object' && (
-                            <Media fill imgClassName="object-cover" loading="lazy" resource={review.images[0].image} />
-                          )}
-                        </div>
-                        {review.images.slice(1).map((item, idx) => (
-                          <div key={idx + 1} className="relative aspect-square w-full">
-                            {typeof item.image === 'object' && (
-                              <Media fill imgClassName="object-cover" loading="lazy" resource={item.image} />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    ) : review.images.length === 4 ? (
-                      <div className="grid grid-cols-2 gap-1">
-                        {review.images.map((item, idx) => (
-                          <div key={idx} className="relative aspect-square w-full">
-                            {typeof item.image === 'object' && (
-                              <Media fill imgClassName="object-cover" loading="lazy" resource={item.image} />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-1">
-                        {review.images.slice(0, 4).map((item, idx) => (
-                          <div key={idx} className="relative aspect-square w-full">
-                            {typeof item.image === 'object' && (
-                              <Media fill imgClassName="object-cover" loading="lazy" resource={item.image} />
-                            )}
-                          </div>
-                        ))}
-                        {review.images.length > 4 && (
-                          <div className="relative aspect-square w-full bg-black/50">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-2xl font-bold text-white">+{review.images.length - 4}</span>
-                            </div>
-                            {typeof review.images[4].image === 'object' && (
-                              <Media fill imgClassName="object-cover opacity-50" loading="lazy" resource={review.images[4].image} />
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                In Their Words
+              </p>
+              <h2 className="font-heading text-[2.5rem] leading-[1.05] tracking-tightest text-ivory md:text-[3.5rem]">
+                The chair is the <span className="display-italic">testimonial.</span>
+              </h2>
+            </div>
+            <p
+              className="text-[0.9rem] leading-relaxed text-ivory/70 md:col-span-5 md:ml-auto md:max-w-prose-sm md:text-right"
+            >
+              Real photos, real words — straight from the people who leave our chairs with a look
+              they love.
+            </p>
+          </div>
+        </Reveal>
+
+        {/* Featured spreads */}
+        <div className="mt-10 grid gap-10 md:mt-14 md:gap-12 lg:gap-16">
+          {featured.map((review, index) => {
+            const image = review.images?.[0]
+            if (!image) return null
+            const reverse = index % 2 === 1
+            return (
+              <Reveal key={review.id} delay={index * 140}>
+                <article className="grid gap-6 md:grid-cols-12 md:items-center md:gap-10">
+                  <div
+                    className={`md:col-span-5 ${
+                      reverse ? 'md:col-start-8 md:row-start-1' : ''
+                    }`}
+                  >
+                    <div className="relative aspect-[4/5] w-full overflow-hidden bg-ivory/5">
+                      <Media
+                        fill
+                        imgClassName="h-full w-full object-cover object-center"
+                        resource={image}
+                        sizes="(min-width: 768px) 40vw, 100vw"
+                      />
+                    </div>
                   </div>
-                ) : null}
-                {review.body && (
-                  <blockquote className="text-sm leading-relaxed text-brand-charcoal/90 sm:text-base">
-                    &quot;{review.body}&quot;
-                  </blockquote>
-                )}
-                <figcaption className="space-y-1 text-sm">
-                  <p className="font-semibold text-brand-charcoal">{review.reviewerName}</p>
-                  <p className="text-yellow-500">
-                    {'★'.repeat(rating)}
-                    <span className="text-brand-warm-gray">{'☆'.repeat(5 - rating)}</span>
-                  </p>
-                  <p className="text-xs uppercase tracking-[0.4em] text-brand-sage">
-                    {review.source?.toUpperCase()}
-                  </p>
-                </figcaption>
-              </figure>
+
+                  <figure
+                    className={`md:col-span-7 ${
+                      reverse ? 'md:col-start-1 md:row-start-1' : ''
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="display-italic mb-3 block select-none text-[3.5rem] leading-none text-ivory/25"
+                    >
+                      &ldquo;
+                    </span>
+                    <blockquote className="font-heading text-xl leading-[1.3] tracking-tight text-ivory md:text-2xl lg:text-[1.65rem]">
+                      {review.body}
+                    </blockquote>
+                    <figcaption className="mt-6 flex items-center gap-4 border-t border-ivory/15 pt-4">
+                      <span className="font-heading text-base text-ivory">
+                        {review.reviewerName}
+                      </span>
+                      <span
+                        className="text-[0.66rem] uppercase text-ivory/55"
+                        style={{ letterSpacing: '0.3em' }}
+                      >
+                        {sourceLabel[review.source] ?? review.source}
+                      </span>
+                    </figcaption>
+                  </figure>
+                </article>
+              </Reveal>
             )
           })}
         </div>
+
+        {/* Short quotes strip */}
+        {rest.length > 0 && (
+          <Reveal delay={240}>
+            <div className="mt-12 grid gap-6 border-t border-ivory/10 pt-10 md:mt-16 md:grid-cols-3 md:gap-10">
+              {rest.map((review) => (
+                <figure key={review.id}>
+                  <p className="text-[0.95rem] leading-relaxed text-ivory/80">
+                    &ldquo;
+                    {review.body.length > 140 ? `${review.body.slice(0, 140).trim()}…` : review.body}
+                    &rdquo;
+                  </p>
+                  <figcaption className="mt-3 flex items-center gap-3">
+                    <span className="font-heading text-sm text-ivory">{review.reviewerName}</span>
+                    <span
+                      className="text-[0.6rem] uppercase text-ivory/50"
+                      style={{ letterSpacing: '0.3em' }}
+                    >
+                      {sourceLabel[review.source] ?? review.source}
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </Reveal>
+        )}
+
+        {/* Footer links */}
+        <Reveal delay={300}>
+          <div className="mt-10 flex flex-col items-start gap-3 border-t border-ivory/10 pt-6 md:mt-14 md:flex-row md:items-baseline md:justify-between">
+            <p
+              className="text-[0.66rem] uppercase text-ivory/55"
+              style={{ letterSpacing: '0.3em' }}
+            >
+              More on Google & Facebook
+            </p>
+            <div className="flex gap-6">
+              <a
+                href="https://share.google/Xkcxld1KoMv3huCpK"
+                rel="noopener noreferrer"
+                target="_blank"
+                className="text-[0.75rem] uppercase text-ivory transition-opacity hover:opacity-70"
+                style={{ letterSpacing: '0.24em' }}
+              >
+                Read on Google →
+              </a>
+              <a
+                href="https://www.facebook.com/AmberStuderStylist/photos"
+                rel="noopener noreferrer"
+                target="_blank"
+                className="text-[0.75rem] uppercase text-ivory transition-opacity hover:opacity-70"
+                style={{ letterSpacing: '0.24em' }}
+              >
+                Read on Facebook →
+              </a>
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
 }
+
+/** Fallback when no reviews have images: show two pull quotes only. */
+const QuotesOnly: React.FC<{ reviews: Review[] }> = ({ reviews }) => (
+  <section
+    data-nav-theme="light"
+    className="relative isolate flex min-h-screen flex-col justify-center overflow-hidden bg-ink py-16 text-ivory md:py-20"
+  >
+    <div className="container">
+      <Reveal>
+        <p
+          className="text-[0.68rem] font-medium uppercase text-ivory/60 mb-6"
+          style={{ letterSpacing: '0.35em' }}
+        >
+          In Their Words · Elma, WA
+        </p>
+      </Reveal>
+      <div className="grid gap-10 md:grid-cols-2 md:gap-16">
+        {reviews.map((review, i) => (
+          <Reveal key={review.id} delay={i * 120}>
+            <figure>
+              <span
+                aria-hidden="true"
+                className="display-italic mb-2 block select-none text-[4rem] leading-none text-ivory/25"
+              >
+                &ldquo;
+              </span>
+              <blockquote className="font-heading text-2xl leading-[1.25] tracking-tight text-ivory md:text-3xl">
+                {review.body}
+              </blockquote>
+              <figcaption className="mt-6 flex items-center gap-4 border-t border-ivory/15 pt-4">
+                <span className="font-heading text-base text-ivory">{review.reviewerName}</span>
+                <span
+                  className="text-[0.66rem] uppercase text-ivory/55"
+                  style={{ letterSpacing: '0.3em' }}
+                >
+                  {sourceLabel[review.source] ?? review.source}
+                </span>
+              </figcaption>
+            </figure>
+          </Reveal>
+        ))}
+      </div>
+    </div>
+  </section>
+)

@@ -9,51 +9,32 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  darkMode: false,
   plugins: [tailwindcssAnimate, typography],
   prefix: '',
-  safelist: [
-    'lg:col-span-4',
-    'lg:col-span-6',
-    'lg:col-span-8',
-    'lg:col-span-12',
-    'border-border',
-    'bg-card',
-    'border-error',
-    'bg-error/30',
-    'border-success',
-    'bg-success/30',
-    'border-warning',
-    'bg-warning/30',
-  ],
   theme: {
     container: {
       center: true,
       padding: {
-        '2xl': '2rem',
-        DEFAULT: '1rem',
-        lg: '2rem',
+        DEFAULT: '1.25rem',
+        sm: '1.5rem',
         md: '2rem',
-        sm: '1rem',
-        xl: '2rem',
+        lg: '2.5rem',
+        xl: '3rem',
+        '2xl': '3rem',
       },
       screens: {
-        '2xl': '86rem',
-        lg: '64rem',
-        md: '48rem',
         sm: '40rem',
+        md: '48rem',
+        lg: '64rem',
         xl: '80rem',
+        '2xl': '90rem',
       },
     },
     extend: {
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-      },
       borderRadius: {
         lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        md: 'calc(var(--radius) + 2px)',
+        sm: 'calc(var(--radius))',
       },
       colors: {
         background: 'var(--background)',
@@ -80,10 +61,21 @@ const config = {
           DEFAULT: 'var(--muted)',
           foreground: 'var(--muted-foreground)',
         },
-        success: 'var(--success)',
-        warning: 'var(--warning)',
-        error: 'var(--error)',
         ring: 'var(--ring)',
+        // New editorial palette — use these going forward.
+        ivory: 'var(--ivory)',
+        paper: 'var(--paper)',
+        ink: {
+          DEFAULT: 'var(--ink)',
+          muted: 'var(--ink-muted)',
+        },
+        line: 'var(--line)',
+        bronze: {
+          DEFAULT: 'var(--bronze)',
+          dark: 'var(--accent-dark)',
+        },
+        sage: 'var(--sage)',
+        // Legacy brand-* kept so old classes still resolve.
         brand: {
           cream: 'var(--brand-cream)',
           parchment: 'var(--brand-parchment)',
@@ -93,42 +85,33 @@ const config = {
           sage: 'var(--brand-sage)',
           charcoal: 'var(--brand-charcoal)',
           warmGray: 'var(--brand-warm-gray)',
+          bronze: 'var(--brand-bronze)',
+          ivory: 'var(--brand-ivory)',
+          line: 'var(--brand-line)',
         },
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'Playfair Display', 'serif'],
         sans: ['var(--font-sans)', 'Inter', 'sans-serif'],
       },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
+      letterSpacing: {
+        tightest: '-0.025em',
+        tighter: '-0.015em',
+        tight: '-0.01em',
+      },
+      maxWidth: {
+        'prose-sm': '38ch',
+        'prose-md': '56ch',
+        'prose-lg': '72ch',
       },
       typography: () => ({
         DEFAULT: {
           css: {
-            '--tw-prose-body': 'var(--foreground)',
-            '--tw-prose-headings': 'var(--primary)',
-            '--tw-prose-bold': 'var(--primary)',
-            '--tw-prose-links': 'var(--accent-dark)',
+            '--tw-prose-body': 'var(--ink)',
+            '--tw-prose-headings': 'var(--ink)',
+            '--tw-prose-bold': 'var(--ink)',
+            '--tw-prose-links': 'var(--bronze)',
             fontFamily: 'var(--font-sans)',
-            h1: {
-              fontFamily: 'var(--font-heading)',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-            },
-            h2: {
-              fontFamily: 'var(--font-heading)',
-              letterSpacing: '0.05em',
-            },
-            strong: {
-              color: 'var(--primary)',
-            },
           },
         },
       }),

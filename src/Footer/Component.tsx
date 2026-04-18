@@ -1,90 +1,126 @@
-import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Footer } from '@/payload-types'
+import { Wordmark } from '@/components/Logo/Wordmark'
+import { Reveal } from '@/components/Reveal'
+import { site } from '@/data/site'
 
-import { CMSLink } from '@/components/Link'
-import { Logo } from '@/components/Logo/Logo'
-import { FooterClient } from './FooterClient'
-
-export async function Footer() {
-  const footerData: Footer = await getCachedGlobal('footer', 1)()
-
-  const navItems = footerData?.navItems || []
+export function Footer() {
+  const year = new Date().getFullYear()
 
   return (
-    <footer className="mt-auto border-t border-brand-wood/30 bg-white text-brand-charcoal">
-      <FooterClient>
-      <div className="container grid gap-8 py-12 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="space-y-4">
-          <Link aria-label="Back to home" className="inline-flex items-center gap-3" href="/">
-            <Logo />
-            <span className="font-heading text-lg tracking-[0.3em] uppercase">Dynamic Stylz</span>
-          </Link>
-          <p className="max-w-sm text-sm leading-relaxed text-brand-warm-gray">
-            Full-service family salon rooted in Elma, WA—bringing modern cuts, color, and kindness to
-            every appointment.
-          </p>
-        </div>
-
-        <div>
-          <h3 className="font-heading text-base uppercase tracking-[0.2em] text-brand-sage">
-            Visit
-          </h3>
-          <p className="mt-3 text-sm leading-relaxed">
-            410 W Main St Suite B
-            <br />
-            Elma, WA 98541
-          </p>
-          <p className="mt-3 text-sm">
-            <span className="font-semibold">Hours:</span> Mon–Thu 9am–7pm · Fri 9am–5pm
-          </p>
-        </div>
-
-        <div>
-          <h3 className="font-heading text-base uppercase tracking-[0.2em] text-brand-sage">
-            Connect
-          </h3>
-          <nav className="mt-3 flex flex-col gap-2 text-sm">
-            {navItems.map(({ link }, i) => {
-              return (
-                    <CMSLink
-                      className="hover:text-brand-sage transition-colors"
-                      key={i}
-                      {...link}
-                    />
-                  )
-                })}
-                <a className="hover:text-brand-sage transition-colors" href="tel:13605812428">
-                  (360) 581-2428
-                </a>
-                <a
-                  className="hover:text-brand-sage transition-colors"
-                  href="https://www.facebook.com/dynamicstylz"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Facebook
-                </a>
-                <a
-                  className="hover:text-brand-sage transition-colors"
-              href="https://maps.app.goo.gl/"
-              rel="noreferrer"
-              target="_blank"
+    <footer data-nav-theme="light" className="mt-auto bg-ink text-ivory">
+      <div className="container pt-24 pb-10 md:pt-32 md:pb-12">
+        {/* Large editorial mark */}
+        <Reveal>
+          <div className="flex flex-col items-center gap-8 border-b border-ivory/15 pb-16 text-center md:pb-20">
+            <Wordmark size="lg" variant="light" />
+            <h2 className="font-heading text-[clamp(2.5rem,7vw,5rem)] leading-[0.95] tracking-tightest text-ivory">
+              <span className="block">Come in.</span>
+              <span className="display-italic block">Sit a while.</span>
+            </h2>
+            <a
+              href={`tel:${site.phone.tel}`}
+              className="inline-flex items-center gap-3 border-b border-ivory pb-1 font-heading text-lg text-ivory transition-colors hover:border-bronze hover:text-bronze md:text-xl"
             >
-              Google Business Profile
+              {site.phone.display}
+              <span aria-hidden="true">→</span>
             </a>
-          </nav>
+          </div>
+        </Reveal>
+
+        {/* Three-column info */}
+        <div className="grid gap-10 pt-16 md:grid-cols-3 md:gap-12 md:pt-20">
+          <Reveal>
+            <div>
+              <p
+                className="text-[0.68rem] font-medium uppercase text-ivory/50"
+                style={{ letterSpacing: '0.32em' }}
+              >
+                Visit
+              </p>
+              <p className="mt-4 font-heading text-lg leading-snug text-ivory">
+                {site.address.street}
+                <br />
+                {site.address.city}, {site.address.state} {site.address.zip}
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <div>
+              <p
+                className="text-[0.68rem] font-medium uppercase text-ivory/50"
+                style={{ letterSpacing: '0.32em' }}
+              >
+                Hours
+              </p>
+              <ul className="mt-4 space-y-1 text-[0.95rem] text-ivory/80">
+                {site.hours.schedule.map((item) => (
+                  <li key={item.day} className="flex justify-between gap-6">
+                    <span>{item.day}</span>
+                    <span className="text-ivory/60">{item.hours}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+
+          <Reveal delay={200}>
+            <div>
+              <p
+                className="text-[0.68rem] font-medium uppercase text-ivory/50"
+                style={{ letterSpacing: '0.32em' }}
+              >
+                Elsewhere
+              </p>
+              <ul className="mt-4 flex flex-col gap-3 text-[0.95rem]">
+                <li>
+                  <a
+                    className="inline-flex items-center gap-2 text-ivory/80 transition-colors hover:text-bronze"
+                    href={site.social.google}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Google
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="inline-flex items-center gap-2 text-ivory/80 transition-colors hover:text-bronze"
+                    href={site.social.facebook}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Facebook
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </li>
+                <li>
+                  <Link
+                    className="inline-flex items-center gap-2 text-ivory/80 transition-colors hover:text-bronze"
+                    href="/contact"
+                  >
+                    Contact
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* Baseline */}
+        <div className="mt-20 flex flex-col gap-3 border-t border-ivory/10 pt-8 text-[0.7rem] text-ivory/50 md:flex-row md:items-center md:justify-between md:mt-28">
+          <p style={{ letterSpacing: '0.1em' }}>
+            © {year} {site.legalName}. All rights reserved.
+          </p>
+          <p className="uppercase" style={{ letterSpacing: '0.32em' }}>
+            Crafted with care in {site.address.city}, {site.address.state}
+          </p>
         </div>
       </div>
-      <div className="border-t border-brand-wood/20 bg-white/60">
-        <div className="container flex flex-col gap-3 py-4 text-xs text-brand-warm-gray md:flex-row md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} Dynamic Stylz Salon LLC. All rights reserved.</p>
-          <p className="text-[0.7rem] uppercase tracking-[0.3em]">Crafted with care in Elma, WA</p>
-        </div>
-      </div>
-      </FooterClient>
     </footer>
   )
 }

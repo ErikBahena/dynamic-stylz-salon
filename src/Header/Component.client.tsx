@@ -1,93 +1,204 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { Logo } from '@/components/Logo/Logo'
+import { Wordmark } from '@/components/Logo/Wordmark'
+import { site } from '@/data/site'
+import { cn } from '@/utilities/ui'
+
+const NAV_LINKS = [
+  { label: 'Services', href: '/#services' },
+  { label: 'Stylists', href: '/#team' },
+  { label: 'Visit', href: '/contact' },
+]
+
+/**
+ * `navTheme` mirrors the `data-nav-theme` attribute each section declares:
+ *  - `"light"` → section bg is dark, so nav text should be ivory/white
+ *  - `"dark"`  → section bg is light, so nav text should be ink/black
+ */
+type NavTheme = 'light' | 'dark'
 
 export const HeaderClient: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [navTheme, setNavTheme] = useState<NavTheme>('light')
+  const lastScrollY = useRef(0)
 
   useEffect(() => {
-    setIsVisible(true)
+    // Resolve which themed section is currently sitting under the header
+    // so we can flip nav colors accordingly.
+    const resolveTheme = (): NavTheme => {
+      const sections = document.querySelectorAll<HTMLElement>('[data-nav-theme]')
+      // Sample point just below the nav bar, at the top-center of the viewport.
+      const sampleY = 24
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect()
+        if (rect.top <= sampleY && rect.bottom > sampleY) {
+          const value = section.getAttribute('data-nav-theme')
+          if (value === 'dark' || value === 'light') return value
+        }
+      }
+      return 'light'
+    }
+
+    const onScroll = () => {
+      const y = window.scrollY
+      const delta = y - lastScrollY.current
+
+      setScrolled(y > 40)
+
+      // Hide-on-scroll: always show near the top; hide on downward scroll,
+      // reveal on upward scroll past a small threshold.
+      if (y < 80) {
+        setHidden(false)
+      } else if (delta > 6) {
+        setHidden(true)
+      } else if (delta < -6) {
+        setHidden(false)
+      }
+
+      setNavTheme(resolveTheme())
+
+      lastScrollY.current = y
+    }
+
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
+
+  const isLight = navTheme === 'light'
+
   return (
-    <header className="relative z-10">
-      <div className="container grid grid-cols-3 items-center gap-4 py-2 md:py-4">
-        {/* Logo on left */}
-        <Link 
-          className="flex items-center gap-5 transition-all duration-500"
+    <header
+      className={cn(
+        'fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color,color,transform] duration-500 ease-out will-change-transform',
+        hidden && !menuOpen ? '-translate-y-full' : 'translate-y-0',
+        // Background + border: transparent at the top, solid-with-blur once
+        // scrolled so nav text never fights whatever section shows through.
+        scrolled
+          ? isLight
+            ? 'border-b border-ivory/10 bg-ink/90 backdrop-blur-md'
+            : 'border-b border-line bg-ivory/95 backdrop-blur-md'
+          : 'border-b border-transparent bg-transparent',
+        // Text color always follows the current section's theme
+        isLight ? 'text-ivory' : 'text-ink',
+      )}
+    >
+      <div className="container flex h-16 items-center justify-between md:h-20">
+        {/* Brand lockup — always visible, sits in line with the nav */}
+        <Link
+          aria-label="Dynamic Stylz Salon — home"
+          className="leading-none transition-opacity duration-500 hover:opacity-80"
           href="/"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateX(0)' : 'translateX(-20px)',
-          }}
+          onClick={() => setMenuOpen(false)}
         >
-          <Logo loading="eager" priority="high" />
-          <span className="font-heading text-xl uppercase tracking-[0.3em] text-brand-charcoal hidden sm:inline">
-            Dynamic Stylz Salon
-          </span>
+          <Wordmark
+            loading="eager"
+            priority="high"
+            size="sm"
+            subtitle={null}
+            variant={isLight ? 'light' : 'dark'}
+          />
         </Link>
 
-        {/* Book Now text link in center */}
-        <div 
-          className="flex justify-center transition-all duration-500 delay-100"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(-10px)',
-          }}
-        >
-          <Link
-            href="/contact"
-            className="text-brand-charcoal transition-colors hover:text-brand-sage uppercase tracking-[0.3em]"
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-10 md:flex">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-[0.72rem] font-medium uppercase transition-opacity hover:opacity-60"
+              style={{ letterSpacing: '0.28em' }}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <a
+            href={`tel:${site.phone.tel}`}
+            className={cn(
+              'inline-flex items-center rounded-full border px-5 py-2.5 text-[0.72rem] font-medium uppercase transition-colors',
+              isLight
+                ? 'border-ivory/70 text-ivory hover:bg-ivory hover:text-ink'
+                : 'border-ink text-ink hover:bg-ink hover:text-ivory',
+            )}
+            style={{ letterSpacing: '0.28em' }}
           >
-            BOOK NOW
-          </Link>
-        </div>
+            Book
+          </a>
+        </nav>
 
-        {/* Social icons on right */}
-        <div 
-          className="flex items-center justify-end gap-4 transition-all duration-500 delay-200"
-          style={{
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateX(0)' : 'translateX(20px)',
-          }}
+        {/* Mobile menu button */}
+        <button
+          aria-expanded={menuOpen}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          className="inline-flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
+          onClick={() => setMenuOpen((v) => !v)}
+          type="button"
         >
-          <a
-            href="https://share.google/Xkcxld1KoMv3huCpK"
-            rel="noreferrer"
-            target="_blank"
-            className="transition-all duration-300 hover:opacity-80 hover:scale-110"
-            aria-label="View Dynamic Stylz Salon on Google"
-          >
-            <svg
-              className="h-6 w-6"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+          <span
+            className={cn(
+              'block h-px w-6 bg-current transition-transform duration-300',
+              menuOpen && 'translate-y-[3px] rotate-45',
+            )}
+          />
+          <span
+            className={cn(
+              'block h-px w-6 bg-current transition-transform duration-300',
+              menuOpen && '-translate-y-[3px] -rotate-45',
+            )}
+          />
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      <div
+        className={cn(
+          'absolute inset-x-0 top-full origin-top overflow-hidden border-b border-line bg-ivory text-ink transition-[max-height,opacity] duration-500 md:hidden',
+          menuOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0',
+        )}
+      >
+        <nav className="container flex flex-col gap-1 py-8">
+          {NAV_LINKS.map((link, i) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMenuOpen(false)}
+              className="border-t border-line py-5 font-heading text-2xl tracking-tight text-ink"
+              style={{ transitionDelay: `${i * 50}ms` }}
             >
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-            </svg>
-          </a>
+              {link.label}
+            </Link>
+          ))}
           <a
-            href="https://www.facebook.com/AmberStuderStylist/photos"
-            rel="noreferrer"
-            target="_blank"
-            className="transition-all duration-300 hover:opacity-80 hover:scale-110"
-            aria-label="Visit Dynamic Stylz Salon on Facebook"
+            href={`tel:${site.phone.tel}`}
+            onClick={() => setMenuOpen(false)}
+            className="mt-4 inline-flex items-center justify-between border-t border-line py-5 text-[0.78rem] font-medium uppercase text-ink"
+            style={{ letterSpacing: '0.28em' }}
           >
-            <svg
-              className="h-6 w-6"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
+            <span>Call to book</span>
+            <span aria-hidden="true">→</span>
           </a>
-        </div>
+        </nav>
       </div>
     </header>
   )

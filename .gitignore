@@ -1,23 +1,20 @@
-build
-dist / media
+# Dependencies
 node_modules
-.DS_Store
-.env
+
+# Build artifacts
 .next
+build
+dist
+
+# Vercel
 .vercel
 
-# Payload default media upload directory
-public/media/
+# OS
+.DS_Store
 
-public/robots.txt
-public/sitemap*.xml
+# Local env
+.env
+.env*.local
 
-
-# Playwright
-node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-
+# Package manager cache
 .pnpm-store

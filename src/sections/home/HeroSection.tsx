@@ -1,197 +1,150 @@
-'use client'
+import type { Hero } from '@/types/content'
 
-import type { Page } from '@/payload-types'
-
-import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
-import RichText from '@/components/RichText'
-import React, { useEffect, useState } from 'react'
+import { site } from '@/data/site'
+import Link from 'next/link'
+import React from 'react'
 
 type Props = {
-  hero?: Page['hero']
+  hero: Hero
 }
 
+const heroImage = {
+  src: '/media/nice_hair_1.jpg',
+  alt: 'A signature look from Dynamic Stylz — hair styling in Elma, WA',
+  width: 1536,
+  height: 2048,
+}
 
 export const HeroSection: React.FC<Props> = ({ hero }) => {
-  const [isVisible, setIsVisible] = useState(false)
-  const [currentSlide, setCurrentSlide] = useState(0)
-
-  // Use images array if available, otherwise fall back to single media or empty
-  const heroImages =
-    hero?.images && hero.images.length > 0
-      ? hero.images.map((item) => (typeof item.image === 'object' ? item.image : null)).filter(Boolean)
-      : hero?.media && typeof hero.media === 'object'
-        ? [hero.media]
-        : []
-
-  useEffect(() => {
-    setIsVisible(true)
-  }, [])
-
-  useEffect(() => {
-    if (heroImages.length <= 1) return
-
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length)
-    }, 5000)
-
-    return () => clearInterval(timer)
-  }, [heroImages.length])
-
-  if (!hero) return null
-
-  const { links, richText } = hero
-
-
   return (
-    <section className="relative flex h-[85vh] min-h-[600px] flex-col overflow-hidden bg-white md:h-[90vh] md:min-h-[700px]">
-      {/* Hero Image - Full Width Background */}
-      <div className="absolute inset-0 h-full w-full">
-        {heroImages.length > 0 ? (
-          heroImages.map((img, index) => (
-            <div
-              key={index}
-              className="absolute inset-0 h-full w-full transition-opacity duration-1000 ease-in-out"
-              style={{
-                opacity: index === currentSlide ? 1 : 0,
-                zIndex: index === currentSlide ? 10 : 0,
-              }}
-            >
-              <Media
-                fill
-                imgClassName="h-full w-full object-cover object-center"
-                priority={index === 0}
-                resource={img}
-              />
-            </div>
-          ))
-        ) : (
-          <div className="flex h-full items-center justify-center bg-brand-charcoal/5">
-            <p className="text-brand-charcoal/50">Add images in CMS</p>
-          </div>
-        )}
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
-      </div>
-
-      {/* Content Overlay - Centered on Image */}
-      <div className="container relative z-10 flex h-full flex-col justify-center">
-        <div className="mx-auto max-w-3xl space-y-8 text-center">
-          {/* Decorative accent line */}
-          <div 
-            className="mx-auto h-1 w-20 bg-brand-sage transition-all duration-700"
-            style={{
-              opacity: isVisible ? 1 : 0,
-              transform: isVisible ? 'scaleX(1)' : 'scaleX(0)',
-            }}
+    <section
+      data-nav-theme="light"
+      className="relative isolate flex min-h-screen flex-col overflow-hidden bg-ink text-ivory"
+    >
+      {/* Main split layout — text left, photography right */}
+      <div className="flex flex-1 flex-col md:grid md:grid-cols-12 md:gap-0">
+        {/* Photography column */}
+        <div className="relative order-first h-[45vh] md:order-last md:col-span-5 md:h-auto md:min-h-screen lg:col-span-5">
+          <Media
+            fill
+            // Push focus down onto the hair, away from the wall decor at the
+            // top of the original photo.
+            imgClassName="h-full w-full object-cover [object-position:center_72%]"
+            priority
+            resource={heroImage}
+            sizes="(min-width: 768px) 42vw, 100vw"
+          />
+          {/* Soft blend gradient into the text side */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-y-0 left-0 hidden w-40 bg-gradient-to-r from-ink to-transparent md:block"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-ink to-transparent md:hidden"
           />
 
-          {/* Main heading */}
-          {richText && (
-            <div 
-              className="space-y-6 transition-all duration-700 delay-100"
-              style={{
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-              }}
-            >
-              <RichText
-                className="text-balance font-heading text-4xl leading-tight tracking-tight text-white md:text-5xl lg:text-6xl"
-                data={richText}
-                enableGutter={false}
-              />
-              <p className="mx-auto max-w-2xl text-lg leading-relaxed text-white/90 md:text-xl">
-                Expert hair services for the whole family • Free consultations • Sensory-friendly
-                appointments available
-              </p>
-            </div>
-          )}
-
-          {/* CTA buttons */}
-          <div 
-            className="flex flex-wrap justify-center gap-4 transition-all duration-700 delay-300"
-            style={{
-              opacity: isVisible ? 1 : 0,
-              transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-            }}
+          {/* Fine photo credit */}
+          <p
+            className="absolute bottom-4 right-4 hidden text-[0.6rem] uppercase text-ivory/70 md:block"
+            style={{ letterSpacing: '0.3em', writingMode: 'vertical-rl' }}
           >
-            {Array.isArray(links) && links.length > 0 ? (
-              links.map(({ link }, i) => (
-                <CMSLink
-                  key={i}
-                  appearance={i === 0 ? 'default' : 'outline'}
-                  className={
-                    i === 0
-                      ? 'rounded-full bg-brand-sage px-8 py-4 text-lg font-medium text-white shadow-lg transition-all duration-300 hover:bg-brand-sage/90 hover:shadow-xl hover:scale-105'
-                      : 'rounded-full border-2 border-white/80 bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:bg-white/20 hover:border-white hover:scale-105'
-                  }
-                  {...link}
-                />
-              ))
-            ) : (
-              <>
-                <a
-                  href="tel:+13604826019"
-                  className="rounded-full bg-brand-sage px-8 py-4 text-lg font-medium text-white shadow-lg transition-all duration-300 hover:bg-brand-sage/90 hover:shadow-xl hover:scale-105"
-                >
-                  Book Now
-                </a>
-                <a
-                  href="#services"
-                  className="rounded-full border-2 border-white/80 bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:bg-white/20 hover:border-white hover:scale-105"
-                >
-                  View Services
-                </a>
-              </>
-            )}
+            The craft · Est. 2009
+          </p>
+        </div>
+
+        {/* Text column */}
+        <div className="relative flex flex-col md:col-span-7 lg:col-span-7">
+          {/* Warm feminine blooms — limited to the text side */}
+          <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+            <div
+              className="absolute -left-[15%] top-[5%] h-[70vh] w-[70vh] rounded-full blur-3xl"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(222,180,190,0.32) 0%, rgba(222,180,190,0.1) 45%, rgba(31,26,23,0) 75%)',
+              }}
+            />
+            <div
+              className="absolute -bottom-[20%] right-[5%] h-[60vh] w-[60vh] rounded-full blur-3xl"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(205,170,185,0.25) 0%, rgba(205,170,185,0.08) 45%, rgba(31,26,23,0) 75%)',
+              }}
+            />
           </div>
 
-          {/* Location & Hours */}
-          <div 
-            className="flex flex-col items-center gap-4 border-t border-white/30 pt-8 text-sm font-medium text-white/90 transition-all duration-700 delay-500 sm:flex-row sm:justify-center sm:gap-6"
-            style={{
-              opacity: isVisible ? 1 : 0,
-              transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <svg
-                className="h-5 w-5 shrink-0 text-brand-sage"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                viewBox="0 0 24 24"
+          {/* Editorial eyebrow — anchors the top of the composition (the brand
+               lockup itself lives in the header, aligned with the nav) */}
+          <div className="container pt-28 md:pt-32">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="inline-block h-px w-10 bg-ivory/40"
+              />
+              <p
+                className="text-[0.68rem] font-medium uppercase text-ivory/80"
+                style={{ letterSpacing: '0.35em' }}
               >
-                <path
-                  d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>Elma, WA</span>
+                Hair Salon · Elma, WA
+              </p>
             </div>
-            <div className="hidden h-4 w-px bg-white/40 sm:block" />
-            <div className="flex items-center gap-2">
-              <svg
-                className="h-5 w-5 shrink-0 text-brand-sage"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>Mon–Thu 9am–7pm • Fri 9am–5pm</span>
+          </div>
+
+          {/* Editorial content */}
+          <div className="container mt-auto pb-12 md:pb-20">
+            <h1 className="max-w-[14ch] font-heading text-[clamp(2.75rem,7.5vw,6rem)] leading-[0.95] tracking-tightest text-ivory">
+              <span className="block">The craft of</span>
+              <span className="block italic">a signature look.</span>
+            </h1>
+
+            <p className="mt-6 max-w-sm text-sm leading-relaxed text-ivory/80 md:mt-8 md:text-base">
+              Cuts, color, and quiet consultations — a family salon rooted in the Pacific
+              Northwest. Every appointment starts with a free chat about what you want.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3 md:mt-10">
+              {hero.ctas.map((cta, i) => {
+                const primary = cta.primary ?? i === 0
+                const className = primary
+                  ? 'inline-flex items-center gap-2 rounded-full bg-ivory px-7 py-3.5 text-[0.78rem] font-medium uppercase tracking-[0.24em] text-ink hover:bg-ivory/90'
+                  : 'inline-flex items-center gap-2 rounded-full border border-ivory/50 px-7 py-3.5 text-[0.78rem] font-medium uppercase tracking-[0.24em] text-ivory hover:border-ivory hover:bg-ivory/10'
+
+                const isExternal =
+                  cta.external || cta.href.startsWith('tel:') || cta.href.startsWith('mailto:')
+
+                if (isExternal) {
+                  return (
+                    <a
+                      key={cta.href}
+                      href={cta.href}
+                      className={className}
+                      {...(cta.external ? { rel: 'noopener noreferrer', target: '_blank' } : {})}
+                    >
+                      {cta.label}
+                    </a>
+                  )
+                }
+                return (
+                  <Link key={cta.href} href={cta.href} className={className}>
+                    {cta.label}
+                  </Link>
+                )
+              })}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Fine bottom meta bar — spans full width */}
+      <div className="border-t border-ivory/15 bg-ink/60 backdrop-blur-sm">
+        <div className="container py-4 text-[0.7rem] text-ivory/70">
+          <div className="flex flex-col gap-2 uppercase tracking-[0.24em] md:flex-row md:items-center md:justify-between">
+            <span>
+              {site.address.street} · {site.address.city}, {site.address.state}
+            </span>
+            <span className="hidden md:inline">Appointments by request</span>
+            <span>{site.hours.summary}</span>
           </div>
         </div>
       </div>
