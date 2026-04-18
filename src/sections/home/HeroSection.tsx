@@ -45,15 +45,28 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
         // visible). Pins the section to what the user can actually see so the
         // CTAs live inside the fold instead of hiding behind the browser chrome.
         // Desktop keeps the legacy `min-h-screen` since there's no chrome to
-        // fight. The meta bar (address/hours) now lives OUTSIDE this section
-        // so the hero stays exactly 100svh and the bar only appears once the
-        // user starts scrolling — it doesn't eat the fold.
-        className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-ink text-ivory md:min-h-screen"
+        // fight.
+        //
+        // `pt-16` on mobile reserves the top 64px (the fixed `h-16` nav
+        // height) as dark bg-ink — the wordmark and hamburger sit on solid
+        // ink instead of fighting bright hair highlights in the photo. On
+        // desktop the nav overlays the image's left fade gradient, so no
+        // top reserve is needed (`md:pt-0`).
+        //
+        // The meta bar (address/hours) lives OUTSIDE this section so the
+        // hero stays exactly 100svh and the bar only appears once the user
+        // starts scrolling — it doesn't eat the fold.
+        className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-ink pt-16 text-ivory md:min-h-screen md:pt-0"
       >
         {/* Main split layout — text left, photography right */}
         <div className="flex flex-1 flex-col md:grid md:grid-cols-12 md:gap-0">
-          {/* Photography column */}
-          <div className="relative order-first h-[36svh] md:order-last md:col-span-5 md:h-auto md:min-h-screen lg:col-span-5">
+          {/* Photography column. `h-[40svh]` on mobile gives the photograph
+              ~40% of the viewport — more editorial presence than the old
+              36svh without crowding the content stack below on iPhone SE
+              (585px viewport: 64 nav + 234 image + 287 text leaves ~17px
+              slack around the content stack). Desktop still fills the
+              full-height right column (`md:min-h-screen`). */}
+          <div className="relative order-first h-[40svh] md:order-last md:col-span-5 md:h-auto md:min-h-screen lg:col-span-5">
             <Media
               fill
               // Push focus down onto the hair, away from the wall decor at the
@@ -68,18 +81,11 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
               aria-hidden="true"
               className="absolute inset-y-0 left-0 hidden w-40 bg-gradient-to-r from-ink to-transparent md:block"
             />
-            {/* Top scrim (mobile only) — keeps the ivory header wordmark legible
-              against bright hair highlights in the photograph. Calibrated to
-              fade out before it touches the eyebrow below. */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-ink/60 via-ink/25 to-transparent md:hidden"
-            />
-            {/* Bottom blend into the text column (mobile only) */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink to-transparent md:hidden"
-            />
+
+            {/* Mobile scrims are intentionally NOT rendered — the image now
+                sits as a clean rectangle between the nav reserve (bg-ink
+                above) and the text rectangle (bg-ink below). Gradient blends
+                muddied that "two stacked rectangles" composition. */}
 
             {/* Fine photo credit */}
             <p
@@ -91,12 +97,13 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
           </div>
 
           {/* Text column. `flex-1` on mobile makes this column absorb the
-            remaining viewport height after the image (36svh) so the
-            content's `mt-auto` has room to push the CTAs down to the
-            bottom of the hero — "Book Now" sits at the bottom of 100svh
-            instead of floating in the middle of a dark empty block. On
-            desktop the parent switches to `md:grid`, which ignores flex
-            properties, so sizing still comes from `md:col-span-7`. */}
+            remaining viewport height after the nav reserve (64px) and the
+            image (40svh), so the content's `mt-auto` has room to push the
+            CTAs down to the bottom of the hero — "Book Now" sits at the
+            bottom of 100svh instead of floating in the middle of a dark
+            empty block. On desktop the parent switches to `md:grid`, which
+            ignores flex properties, so sizing still comes from
+            `md:col-span-7`. */}
           <div className="relative flex flex-1 flex-col md:col-span-7 lg:col-span-7">
             {/* Warm feminine blooms — limited to the text side */}
             <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
