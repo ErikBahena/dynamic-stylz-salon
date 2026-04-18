@@ -4,4 +4,5 @@ export { TestimonialsSection } from './TestimonialsSection'
 export { TeamSpotlight } from './TeamSpotlight'
 export { AccommodationsNote } from './AccommodationsNote'
 export { VisitSection } from './VisitSection'
+export { FaqSection } from './FaqSection'
 

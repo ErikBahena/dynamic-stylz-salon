@@ -52,6 +52,11 @@ export const VisitSection: React.FC = () => {
                 <span className="display-italic mt-1 block text-ink-muted">
                   {site.address.city}, {site.address.state}
                 </span>
+                <span className="sr-only">
+                  {' '}
+                  — Visit Dynamic Stylz Salon in Elma, WA. Serving Elma, Montesano,
+                  Satsop, McCleary, and the greater Grays Harbor County area.
+                </span>
               </h2>
             </Reveal>
 

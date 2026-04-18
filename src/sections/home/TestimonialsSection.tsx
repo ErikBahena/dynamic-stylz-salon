@@ -50,6 +50,10 @@ export const TestimonialsSection: React.FC<Props> = ({ reviews }) => {
               </p>
               <h2 className="font-heading text-[2.5rem] leading-[1.05] tracking-tightest text-ivory md:text-[3.5rem]">
                 The chair is the <span className="display-italic">testimonial.</span>
+                <span className="sr-only">
+                  {' '}
+                  — What clients say about Dynamic Stylz Salon in Elma, WA.
+                </span>
               </h2>
             </div>
             <p

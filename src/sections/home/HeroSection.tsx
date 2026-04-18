@@ -93,14 +93,24 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
 
           {/* Editorial content */}
           <div className="container mt-auto pb-12 md:pb-20">
+            {/* Single H1 for the page — opens with the editorial display
+                line and ends with a screen-reader/SEO-only locality phrase.
+                Google reads the full text but only the first two lines
+                render, so the editorial composition stays clean. */}
             <h1 className="max-w-[14ch] font-heading text-[clamp(2.75rem,7.5vw,6rem)] leading-[0.95] tracking-tightest text-ivory">
               <span className="block">The craft of</span>
               <span className="block italic">a signature look.</span>
+              <span className="sr-only">
+                {' '}
+                — Dynamic Stylz Salon, a hair salon in Elma, WA serving Grays Harbor
+                County.
+              </span>
             </h1>
 
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-ivory/80 md:mt-8 md:text-base">
-              Cuts, color, and quiet consultations — a family salon rooted in the Pacific
-              Northwest. Every appointment starts with a free chat about what you want.
+              Cuts, color, and quiet consultations at our Elma, WA salon — serving Montesano,
+              Satsop, McCleary, and the wider Grays Harbor County. Every appointment starts
+              with a free chat about what you want.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3 md:mt-10">

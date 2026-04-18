@@ -58,6 +58,10 @@ export const TeamSpotlight: React.FC<Props> = ({ team }) => {
                   <span className="display-italic">one chair at a time.</span>
                 </>
               )}
+              <span className="sr-only">
+                {' '}
+                — Meet the stylists at Dynamic Stylz Salon in Elma, WA.
+              </span>
             </h2>
           </Reveal>
           <Reveal className="md:col-span-5" delay={120}>

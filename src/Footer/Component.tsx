@@ -16,7 +16,12 @@ export function Footer() {
   return (
     <footer data-nav-theme="light" className="mt-auto bg-ink text-ivory">
       <div className="container pt-20 pb-10 md:pt-24 md:pb-12">
-        {/* Wordmark + signature line */}
+        {/* Wordmark + NAP block.
+            Name/Address/Phone printed on every page in crawlable plain text
+            is the single highest-leverage local-SEO signal — Google cross-
+            checks the on-site NAP against the Google Business Profile and
+            the other citation sites for consistency. Keep the phrasing
+            identical to what's on GBP. */}
         <Reveal>
           <div className="flex flex-col items-center gap-6 border-b border-ivory/10 pb-14 text-center md:pb-16">
             <Wordmark size="md" variant="light" />
@@ -26,6 +31,27 @@ export function Footer() {
             >
               {site.tagline}
             </p>
+
+            <address className="mt-2 flex flex-col items-center gap-1 text-[0.78rem] not-italic text-ivory/75 md:text-[0.82rem]">
+              <span>
+                <span className="sr-only">Address: </span>
+                {site.address.street}, {site.address.city}, {site.address.state}{' '}
+                {site.address.zip}
+              </span>
+              <span>
+                <span className="sr-only">Phone: </span>
+                <a
+                  className="underline decoration-ivory/30 underline-offset-4 transition-colors hover:text-ivory hover:decoration-ivory"
+                  href={`tel:${site.phone.tel}`}
+                >
+                  {site.phone.display}
+                </a>
+                <span className="mx-3 text-ivory/30" aria-hidden="true">
+                  ·
+                </span>
+                <span>{site.hours.summary}</span>
+              </span>
+            </address>
           </div>
         </Reveal>
 

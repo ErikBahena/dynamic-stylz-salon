@@ -32,6 +32,10 @@ export const ServicesShowcase: React.FC<Props> = ({ services }) => {
             <h2 className="font-heading text-[2.5rem] leading-[1.05] tracking-tightest text-ink md:text-[3.5rem]">
               A considered list of{' '}
               <span className="display-italic">services.</span>
+              <span className="sr-only">
+                {' '}
+                — Hair services in Elma &amp; Grays Harbor County, WA.
+              </span>
             </h2>
           </Reveal>
           <Reveal className="md:col-span-5" delay={120}>

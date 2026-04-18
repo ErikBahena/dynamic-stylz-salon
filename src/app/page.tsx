@@ -2,6 +2,7 @@ import React from 'react'
 
 import {
   AccommodationsNote,
+  FaqSection,
   HeroSection,
   ServicesShowcase,
   TeamSpotlight,
@@ -28,6 +29,7 @@ export default function HomePage() {
       <TestimonialsSection reviews={sortedReviews} />
       <TeamSpotlight team={sortedTeam.slice(0, 6)} />
       <VisitSection />
+      <FaqSection />
       <AccommodationsNote />
     </main>
   )

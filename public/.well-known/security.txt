@@ -1,0 +1,7 @@
+# Security policy for dynamicstylz.com (https://www.rfc-editor.org/rfc/rfc9116)
+# If you have discovered a security issue with this site, please reach out.
+
+Contact: mailto:devteam@invintus.com
+Expires: 2027-04-18T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://dynamicstylz.com/.well-known/security.txt

@@ -17,6 +17,9 @@ export const AccommodationsNote: React.FC = () => {
             >
               A quiet note
             </p>
+            {/* h2 for screen readers / SEO — sensory-friendly + family-friendly
+                are both local-intent keywords that help with long-tail queries. */}
+            <h2 className="sr-only">Sensory-Friendly &amp; Family Appointments</h2>
             <p className="display-italic text-lg leading-relaxed text-ink md:text-xl">
               Sensory-friendly appointments available by request — just mention it when you book
               and we&rsquo;ll make the space feel right.
