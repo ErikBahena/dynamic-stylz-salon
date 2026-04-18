@@ -29,15 +29,19 @@ interface Props {
 
 const sizeMap = {
   sm: {
-    // Mobile header has to fit icon + wordmark + hamburger inside a 320-375px
-    // viewport with 40px of container padding. 9 × 9 icon + 0.95rem wordmark
-    // leaves ~30px of breathing room on a 320px viewport — the text no longer
-    // sits flush against the hamburger. Tablet+ up-sizes back to the original
-    // editorial scale.
-    icon: 'h-9 w-9 md:h-11 md:w-11',
-    gap: 'gap-2 md:gap-3',
-    name: 'text-[0.95rem] md:text-lg',
-    subtitle: 'text-[0.52rem] md:text-[0.55rem]',
+    // Header lockup — noticeably more present than the old 36px mark, still
+    // a tier below the footer's `lg` treatment. Three tiers:
+    //   • default (phones ≥380px, the common case): 48px icon / 1.3rem name
+    //   • md (≥768px desktop): 50px icon / 1.35rem name
+    //   • max-[380px] (very narrow phones — SE 1st gen 320, iPhone Mini 360):
+    //     tapers to 42px / 1.18rem so the hamburger doesn't clip.
+    icon: 'h-12 w-12 max-[380px]:h-[42px] max-[380px]:w-[42px] md:h-[50px] md:w-[50px]',
+    gap: 'gap-3 max-[380px]:gap-2.5 md:gap-3.5',
+    name: 'text-[1.3rem] max-[380px]:text-[1.18rem] md:text-[1.35rem]',
+    // Subtitle rarely renders here (the nav passes `subtitle={null}`) but we
+    // still scale it for anywhere else that opts into the small preset with
+    // a subtitle.
+    subtitle: 'text-[0.58rem] max-[380px]:text-[0.54rem] md:text-[0.6rem]',
     subtitleTracking: '0.36em',
   },
   md: {
