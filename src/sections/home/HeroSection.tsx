@@ -60,13 +60,14 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
       >
         {/* Main split layout — text left, photography right */}
         <div className="flex flex-1 flex-col md:grid md:grid-cols-12 md:gap-0">
-          {/* Photography column. `h-[40svh]` on mobile gives the photograph
-              ~40% of the viewport — more editorial presence than the old
-              36svh without crowding the content stack below on iPhone SE
-              (585px viewport: 64 nav + 234 image + 287 text leaves ~17px
-              slack around the content stack). Desktop still fills the
-              full-height right column (`md:min-h-screen`). */}
-          <div className="relative order-first h-[40svh] md:order-last md:col-span-5 md:h-auto md:min-h-screen lg:col-span-5">
+          {/* Photography column. Responsive height: short viewports (iPhone
+              SE, ~585svh) stay at 40svh so the content stack below still
+              fits; taller viewports (iPhone 14 Pro and up) bump to 46svh for
+              more editorial presence — the photograph gets to breathe on
+              modern phones without crowding out the CTAs on compact ones.
+              Desktop ignores this and fills the full-height right column
+              (`md:min-h-screen`). */}
+          <div className="relative order-first h-[40svh] [@media(min-height:720px)]:h-[46svh] md:order-last md:col-span-5 md:h-auto md:min-h-screen lg:col-span-5">
             <Media
               fill
               // Push focus down onto the hair, away from the wall decor at the
@@ -98,12 +99,12 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
 
           {/* Text column. `flex-1` on mobile makes this column absorb the
             remaining viewport height after the nav reserve (64px) and the
-            image (40svh), so the content's `mt-auto` has room to push the
-            CTAs down to the bottom of the hero — "Book Now" sits at the
-            bottom of 100svh instead of floating in the middle of a dark
-            empty block. On desktop the parent switches to `md:grid`, which
-            ignores flex properties, so sizing still comes from
-            `md:col-span-7`. */}
+            image (40–46svh, see above), so the content's `mt-auto` has room
+            to push the CTAs down to the bottom of the hero — "Book Now"
+            sits at the bottom of 100svh instead of floating in the middle
+            of a dark empty block. On desktop the parent switches to
+            `md:grid`, which ignores flex properties, so sizing still comes
+            from `md:col-span-7`. */}
           <div className="relative flex flex-1 flex-col md:col-span-7 lg:col-span-7">
             {/* Warm feminine blooms — limited to the text side */}
             <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
