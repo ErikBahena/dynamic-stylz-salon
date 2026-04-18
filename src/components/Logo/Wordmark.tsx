@@ -29,9 +29,14 @@ interface Props {
 
 const sizeMap = {
   sm: {
-    icon: 'h-10 w-10 md:h-11 md:w-11',
-    gap: 'gap-2.5 md:gap-3',
-    name: 'text-base md:text-lg',
+    // Mobile header has to fit icon + wordmark + hamburger inside a 320-375px
+    // viewport with 40px of container padding. 9 × 9 icon + 0.95rem wordmark
+    // leaves ~30px of breathing room on a 320px viewport — the text no longer
+    // sits flush against the hamburger. Tablet+ up-sizes back to the original
+    // editorial scale.
+    icon: 'h-9 w-9 md:h-11 md:w-11',
+    gap: 'gap-2 md:gap-3',
+    name: 'text-[0.95rem] md:text-lg',
     subtitle: 'text-[0.52rem] md:text-[0.55rem]',
     subtitleTracking: '0.36em',
   },

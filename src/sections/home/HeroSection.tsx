@@ -12,8 +12,11 @@ type Props = {
 const heroImage = {
   src: '/media/nice_hair_1.jpg',
   alt: 'A signature look from Dynamic Stylz — hair styling in Elma, WA',
-  width: 1536,
-  height: 2048,
+  // Source is 1200×1600 after ffmpeg compression (scale=-2:1600 q:v=6,
+  // ~235KB). Next/Image derives AVIF/WebP variants down to ~30-40KB for
+  // mobile — the source just needs enough headroom for retina desktop.
+  width: 1200,
+  height: 1600,
 }
 
 export const HeroSection: React.FC<Props> = ({ hero }) => {
@@ -75,17 +78,16 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
           </div>
 
           {/* Editorial eyebrow — anchors the top of the composition (the brand
-               lockup itself lives in the header, aligned with the nav) */}
+               lockup itself lives in the header, aligned with the nav).
+               Tracking tightens on mobile so "Hair Salon · Elma, WA" sits
+               inside the viewport without wrapping or pushing the rule. */}
           <div className="container pt-28 md:pt-32">
             <div className="flex items-center gap-3">
               <span
                 aria-hidden="true"
-                className="inline-block h-px w-10 bg-ivory/40"
+                className="inline-block h-px w-8 bg-ivory/40 md:w-10"
               />
-              <p
-                className="text-[0.68rem] font-medium uppercase text-ivory/80"
-                style={{ letterSpacing: '0.35em' }}
-              >
+              <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-ivory/80 md:tracking-[0.35em]">
                 Hair Salon · Elma, WA
               </p>
             </div>
@@ -113,12 +115,20 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
               with a free chat about what you want.
             </p>
 
+            {/* CTAs. `flex-wrap` lets the second pill flow to a second row
+                when the viewport is too narrow to fit both side-by-side.
+                Padding + letter-spacing tighten on mobile so "VIEW SERVICES"
+                (the widest label) fits inside a 320px viewport without
+                clipping — the editorial 0.24em tracking is preserved on
+                tablet/desktop where there's room for it. */}
             <div className="mt-8 flex flex-wrap gap-3 md:mt-10">
               {hero.ctas.map((cta, i) => {
                 const primary = cta.primary ?? i === 0
+                const base =
+                  'inline-flex items-center gap-2 whitespace-nowrap rounded-full px-5 py-3 text-[0.72rem] font-medium uppercase tracking-[0.18em] md:px-7 md:py-3.5 md:text-[0.78rem] md:tracking-[0.24em]'
                 const className = primary
-                  ? 'inline-flex items-center gap-2 rounded-full bg-ivory px-7 py-3.5 text-[0.78rem] font-medium uppercase tracking-[0.24em] text-ink hover:bg-ivory/90'
-                  : 'inline-flex items-center gap-2 rounded-full border border-ivory/50 px-7 py-3.5 text-[0.78rem] font-medium uppercase tracking-[0.24em] text-ivory hover:border-ivory hover:bg-ivory/10'
+                  ? `${base} bg-ivory text-ink hover:bg-ivory/90`
+                  : `${base} border border-ivory/50 text-ivory hover:border-ivory hover:bg-ivory/10`
 
                 const isExternal =
                   cta.external || cta.href.startsWith('tel:') || cta.href.startsWith('mailto:')
@@ -146,10 +156,12 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
         </div>
       </div>
 
-      {/* Fine bottom meta bar — spans full width */}
+      {/* Fine bottom meta bar — spans full width. Tracking eases on mobile
+          so the address + hours both fit comfortably inside the viewport
+          at text-[0.68rem] without horizontal overflow. */}
       <div className="border-t border-ivory/15 bg-ink/60 backdrop-blur-sm">
-        <div className="container py-4 text-[0.7rem] text-ivory/70">
-          <div className="flex flex-col gap-2 uppercase tracking-[0.24em] md:flex-row md:items-center md:justify-between">
+        <div className="container py-4 text-[0.68rem] text-ivory/70 md:text-[0.7rem]">
+          <div className="flex flex-col gap-1.5 uppercase tracking-[0.16em] md:flex-row md:items-center md:justify-between md:gap-2 md:tracking-[0.24em]">
             <span>
               {site.address.street} · {site.address.city}, {site.address.state}
             </span>
