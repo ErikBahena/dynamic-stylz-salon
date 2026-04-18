@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 
+import { Analytics } from '@vercel/analytics/next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import React from 'react'
 
@@ -56,6 +57,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         {children}
         <Footer />
+        {/* Vercel Analytics — privacy-friendly page-view + referrer tracking.
+            Only loads on the production deploy (no dev noise) and auto-
+            respects Do Not Track. Zero-config as long as the project is
+            linked on Vercel. */}
+        <Analytics />
       </body>
     </html>
   )
