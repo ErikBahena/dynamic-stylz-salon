@@ -33,7 +33,7 @@ export const HeroSection: React.FC<Props> = ({ hero }) => {
       {/* Main split layout — text left, photography right */}
       <div className="flex flex-1 flex-col md:grid md:grid-cols-12 md:gap-0">
         {/* Photography column */}
-        <div className="relative order-first h-[38svh] min-h-[260px] md:order-last md:col-span-5 md:h-auto md:min-h-screen lg:col-span-5">
+        <div className="relative order-first h-[36svh] md:order-last md:col-span-5 md:h-auto md:min-h-screen lg:col-span-5">
           <Media
             fill
             // Push focus down onto the hair, away from the wall decor at the
