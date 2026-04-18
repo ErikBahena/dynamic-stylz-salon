@@ -60,7 +60,7 @@ export const faqs: Faq[] = [
     id: 'payment',
     question: 'What forms of payment do you accept?',
     answer:
-      'We take cash, debit, and all major credit cards. Tips are appreciated and can be added to any card payment or left in cash.',
+      'We take cash, debit, and all major credit cards.',
   },
   {
     id: 'booking',
